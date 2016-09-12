@@ -1,10 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(minho_team_simulation_tools)
+project(minho_team_simulation_tools C CXX)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+	roscpp
+	std_msgs
+	message_generation	
+	sensor_msgs
+	genmsg	
+	minho_team_ros		
+)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -39,12 +47,15 @@ find_package(catkin REQUIRED)
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+#add_message_files(
+#		FILES
+#		pose.msg
+#		position.msg
+#      controlInfo.msg
+#      robotInfo.msg
+#      refBoxInfo.msg
+#      teleop.msg
+#)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -61,10 +72,7 @@ find_package(catkin REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+	generate_messages( DEPENDENCIES std_msgs sensor_msgs )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -95,87 +103,38 @@ find_package(catkin REQUIRED)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES minho_team_simulation_tools
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+	catkin_package(
+		#  INCLUDE_DIRS include
+		#  LIBRARIES minho_team
+		CATKIN_DEPENDS message_runtime std_msgs sensor_msgs
+		DEPENDS sensor_msgs
+	)
+
+
+set(PROJECT_DIRECTORY ~/catkin_ws/src/minho_team_simulation_tools)
+include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
+find_package(gazebo REQUIRED)
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+
+##################
+## Build Plugin ##
+##################
+set(HARDWARE_DIR ${PROJECT_DIRECTORY}/robot_plugin)
+include_directories(${HARDWARE_DIR}/include)
+add_library(minho_robot SHARED ${HARDWARE_DIR}/src/minho_robot.cc)
+set_target_properties( minho_robot
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIRECTORY}/plugins
 )
+target_link_libraries(minho_robot ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
-
-## Declare a C++ library
-# add_library(minho_team_simulation_tools
-#   src/${PROJECT_NAME}/minho_team_simulation_tools.cpp
-# )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(minho_team_simulation_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Declare a C++ executable
-# add_executable(minho_team_simulation_tools_node src/minho_team_simulation_tools_node.cpp)
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(minho_team_simulation_tools_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(minho_team_simulation_tools_node
-#   ${catkin_LIBRARIES}
-# )
-
-#############
-## Install ##
-#############
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark executables and/or libraries for installation
-# install(TARGETS minho_team_simulation_tools minho_team_simulation_tools_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_minho_team_simulation_tools.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+set(WORLD_DIR ${PROJECT_DIRECTORY}/world_plugin)
+include_directories(${WORLD_DIR}/include)
+add_library(minho_world SHARED ${WORLD_DIR}/src/minho_world.cc)
+set_target_properties( minho_world
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIRECTORY}/plugins
+)
+target_link_libraries(minho_world ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
