@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Teleop>
+    <property name="EXEC">rosrun</property>
+    <property name="PACKAGE">minho_gazebo</property>
+    <property name="NODE">minho_teleop</property>
+    <property name="ARG">-r</property>
+</Teleop>

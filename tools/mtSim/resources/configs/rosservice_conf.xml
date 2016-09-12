@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Commands>
+    <Rosservice>
+        <service name="play" pre="/gazebo/unpause_physics" post=""></service>
+        <service name="pause" pre="/gazebo/pause_physics" post=""></service>
+        <service name="reset" pre="/gazebo/reset_simulation" post=""></service>
+        <service name="delete" pre="/gazebo/delete_model '{model_name: " post="}'"></service>
+    </Rosservice>   
+</Commands>

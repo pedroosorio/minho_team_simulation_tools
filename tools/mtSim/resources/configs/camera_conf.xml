@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<CameraConfig>
+    <StandardCameraViews>
+        <view ID="d1" positionX="0.0" positionY="0.0" positionZ="8.5" rotationYaw="1.57" rotationPitch="1.57"></view>
+        <view ID="d2" positionX="4.0" positionY="-7.0" positionZ="7.0" rotationYaw="1.97" rotationPitch="0.9"></view>
+        <view ID="d3" positionX="-4.0" positionY="-7.0" positionZ="7.0" rotationYaw="1.15" rotationPitch="0.9"></view>
+        <view ID="d4" positionX="0.0" positionY="-5.5" positionZ="9.0" rotationYaw="1.57" rotationPitch="1.1"></view>>
+    </StandardCameraViews>   
+    <CustomCameraViews>
+        <view ID="c1" positionX="0.0" positionY="0.0" positionZ="8.5" rotationYaw="1.57" rotationPitch="1.57"></view>
+        <view ID="c2" positionX="4.0" positionY="-7.0" positionZ="7.0" rotationYaw="1.97" rotationPitch="0.9"></view>
+        <view ID="c3" positionX="-4.0" positionY="-7.0" positionZ="7.0" rotationYaw="1.15" rotationPitch="0.9"></view>
+        <view ID="c4" positionX="0.0" positionY="-5.5" positionZ="9.0" rotationYaw="1.57" rotationPitch="1.1"></view>>
+    </CustomCameraViews> 
+</CameraConfig>

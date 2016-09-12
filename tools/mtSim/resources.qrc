@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/images/app.ico</file>
+        <file>resources/images/splash.png</file>
+        <file>resources/images/critical.png</file>
+        <file>resources/images/stop.png</file>
+        <file>resources/images/play.png</file>
+        <file>resources/images/pause.png</file>
+        <file>resources/images/camera.png</file>
+        <file>resources/configs/camera_conf.xml</file>
+        <file>resources/configs/rosservice_conf.xml</file>
+        <file>resources/configs/teleop_conf.xml</file>
+    </qresource>
+</RCC>
