@@ -18,4 +18,4 @@ The package will in future include the following RoboCup leagues:
  * Model plugins to provide ROS interfacing with the model
  * Guides to create, configure and run custom models and worlds
   
-*Developed by **Pedro Osório Silva & MinhoTeam** @2016*
+*Developed by Pedro Osório Silva & MinhoTeam @2016*
