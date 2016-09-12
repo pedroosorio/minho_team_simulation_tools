@@ -10,9 +10,9 @@ The package will in future include the following RoboCup leagues:
  * Autonomous Driving
  * General Simulation
  
- Where the simulation cannot provide full interface to the user, it will have many tutorials, guides and examples to make the usage of the simulator as smooth as possible.
+Where the simulation cannot provide full interface to the user, it will have many tutorials, guides and examples to make the usage of the simulator as smooth as possible.
  
- The package will includ the following:
+The package will includ the following:
  
  * Standard models and worlds for each league
  * Model plugins to provide ROS interfacing with the model
