@@ -185,6 +185,7 @@ DIST          = /opt/Qt/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/qt_config.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/spec_post.prf \
+		../mtSim/.qmake.stash \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/default_pre.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/resolve_config.prf \
@@ -337,6 +338,7 @@ Makefile: ../mtSim/mtSim.pro /opt/Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf /op
 		/opt/Qt/5.7/gcc_64/mkspecs/features/qt_config.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/default_pre.prf \
 		/opt/Qt/5.7/gcc_64/mkspecs/features/resolve_config.prf \
@@ -476,6 +478,7 @@ Makefile: ../mtSim/mtSim.pro /opt/Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf /op
 /opt/Qt/5.7/gcc_64/mkspecs/features/qt_config.prf:
 /opt/Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf:
 /opt/Qt/5.7/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /opt/Qt/5.7/gcc_64/mkspecs/features/exclusive_builds.prf:
 /opt/Qt/5.7/gcc_64/mkspecs/features/default_pre.prf:
 /opt/Qt/5.7/gcc_64/mkspecs/features/resolve_config.prf:
@@ -1895,7 +1898,55 @@ mainwindow.o: ../mtSim/mainwindow.cpp ../mtSim/mainwindow.h \
 		/opt/Qt/5.7/gcc_64/include/QtNetwork/qabstractsocket.h \
 		/opt/Qt/5.7/gcc_64/include/QtNetwork/QNetworkInterface \
 		/opt/Qt/5.7/gcc_64/include/QtNetwork/qnetworkinterface.h \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		/opt/Qt/5.7/gcc_64/include/QtCore/QVariant \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QAction \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qaction.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qactiongroup.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QApplication \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qapplication.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/opt/Qt/5.7/gcc_64/include/QtGui/qguiapplication.h \
+		/opt/Qt/5.7/gcc_64/include/QtGui/qinputmethod.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QButtonGroup \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qbuttongroup.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QFrame \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QGridLayout \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QHBoxLayout \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qheaderview.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qstyleoption.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/opt/Qt/5.7/gcc_64/include/QtGui/qvalidator.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qslider.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qabstractslider.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qstyle.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qtabbar.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qrubberband.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QLabel \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qlabel.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QMenuBar \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qmenubar.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qmenu.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QPushButton \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qpushbutton.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QTabWidget \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QTableWidget \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qtablewidget.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qtableview.h \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QVBoxLayout \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QWidget \
+		../mtSim/renderview.h \
+		/opt/Qt/5.7/gcc_64/include/QtGui/QMouseEvent \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/QToolTip \
+		/opt/Qt/5.7/gcc_64/include/QtWidgets/qtooltip.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../mtSim/mainwindow.cpp
 
 renderingcamera.o: ../mtSim/renderingcamera.cpp ../mtSim/renderingcamera.h \

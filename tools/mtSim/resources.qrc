@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/images/app.ico</file>
         <file>resources/images/splash.png</file>
         <file>resources/images/critical.png</file>
         <file>resources/images/stop.png</file>
