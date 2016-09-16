@@ -1,1 +1,4 @@
-# minho-team-basestation
+# Minho Team Basestation   
+* Usage languages
+    * C++
+    * JavaScript
