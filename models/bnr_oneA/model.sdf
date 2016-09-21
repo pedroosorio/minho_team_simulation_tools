@@ -266,7 +266,84 @@
       <gravity>true</gravity>
     </link>
 
+    <link name="castor">
+      <inertial>
+         <pose>0.0225 0.0125 0.0105 0 0 0</pose>
+         <mass>0.05</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial> 
+      <pose>0.1547 -0.081 0.0 -1.57 0 0</pose>  
+      <collision name="castor_collision">
+        <pose>0.0 -0.0 0.0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/wheel_support.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="castor_visual">
+        <pose>0.0 0.0 0.0 0.0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/wheel_support.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.2 0.2 0.2 1.0</ambient>
+             <diffuse>0.8 0.8 0.8 1.0</diffuse>
+             <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
     
+    <link name="wheel">
+      <inertial>
+         <pose>0.016 0.007 0.016 0 0 0</pose>
+         <mass>0.01</mass>
+
+      </inertial> 
+      <pose>0.1615 -0.078 -0.035 0 0 0</pose>  
+      <collision name="wheel_collision">
+        <pose>0.0 -0.0 0.0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/wheel.STL</uri>
+          </mesh>
+        </geometry>
+         <surface>
+          <friction>
+            <ode>
+              <mu>0.3</mu>
+              <mu2>0.3</mu2>
+              <slip1>0.6</slip1>
+              <slip2>0.6</slip2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="wheel_visual">
+        <pose>0.0 0.0 0.0 0.0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.0 0.1 0.6 1.0</ambient>
+             <diffuse>0.0 0.8 0.8 1.0</diffuse>
+             <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
     
     <joint type="fixed" name="plastic_bolts">
         <pose>0.1025 -0.05125 0.004 0 0 0</pose>
@@ -292,6 +369,14 @@
           <xyz>0 0 1</xyz>
         </axis>
     </joint>
+    <joint type="fixed" name="castor_bolts">
+        <pose>0.0225 0.0 0.01 0 0 0</pose>
+        <child>castor</child>
+        <parent>base</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
     
     <joint type="revolute" name="left_wheel_joint">
     <pose>0.0325 0.0 0.0325 0 0 0</pose>
@@ -307,6 +392,16 @@
     <pose>-0.0325 0.0 0.0325 0 0 0</pose>
       <child>right_wheel</child>
       <parent>base</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <use_parent_model_frame>true</use_parent_model_frame>
+      </axis>
+    </joint>
+    
+    <joint type="revolute" name="wheel_joint">
+    <pose>0.016 0.0 0.016 0 0 0</pose>
+      <child>wheel</child>
+      <parent>castor</parent>
       <axis>
         <xyz>0 1 0</xyz>
         <use_parent_model_frame>true</use_parent_model_frame>
