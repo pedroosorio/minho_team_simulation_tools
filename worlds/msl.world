@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- Game field, including ref box table
+    for reference, the two goalies, line markings
+    and stoppers. -->
+    
+     <physics type='ode'>
+      <max_step_size>0.015</max_step_size>
+      <real_time_update_rate>67</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+    </physics>
+    
+    <include>
+      <uri>model://robocup_msl_field</uri>
+    </include>
+    <!-- Game ball, placed in the center of the
+    field. -->
+    <include>
+      <uri>model://robocup_msl_ball</uri>
+    </include>
+    
+    <!-- Testing robot -->
+    <include>
+      <uri>model://minhoteam_msl_robot</uri>
+    </include>
+    
+    
+    <plugin filename="libminho_world.so" name="minho_world">
+        <model model_id="0">model://robocup_msl_ball</model>
+        <model model_id="1">model://minhoteam_msl_robot</model>
+        <model model_id="2">model://other_msl_robot</model>
+    </plugin>
+  </world>
+</sdf>

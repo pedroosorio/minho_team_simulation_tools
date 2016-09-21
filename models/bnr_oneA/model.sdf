@@ -1,0 +1,317 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="bnr_oneA">
+  <pose>0 0 0.1 0 0 0</pose>
+       <link name="base">
+      <inertial>
+         <pose>0.1025 -0.07 0.002 0 0 0</pose>
+         <mass>0.035</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial> 
+      <pose>0 0 0.002 0 0 0</pose>
+      <collision name="base_collision">
+        <pose>0 0 0 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/base.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="base_visual">
+        <pose>0.0 0.0 0 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/base.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
+    
+   <link name="top">
+      <inertial>
+         <pose>0.09 -0.05125 0.01 0 0 0</pose>
+         <mass>0.035</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial> 
+      <pose>0.005 -0.01875 0.006 0 0 0</pose>  
+      <collision name="top_collision">
+        <pose>0.09 -0.05125 0.01 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.18 0.1025 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="top_visual">
+        <pose>0.0 0.0 0.0 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/circuit.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.0 0.1 0.6 1.0</ambient>
+             <diffuse>0.0 0.8 0.8 1.0</diffuse>
+             <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
+    
+    <link name="left_motor">
+    <inertial>
+         <pose>0.019 -0.03 -0.018 0 0 0</pose>
+         <mass>0.212</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial>
+      <pose>0.05 -0.077 0.002 0 0 0</pose>  
+      <collision name="left_motor_collision">
+        <pose>0.0 0.0 0.0 0.0 3.14 3.14</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/motor.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="left_motor_visual">
+        <pose>0.0 0.0 0.0 0.0 3.14 3.14</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/motor.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.2 0.2 0.2 1.0</ambient>
+             <diffuse>0.8 0.8 0.8 1.0</diffuse>
+             <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
+    
+    <link name="right_motor">
+    <inertial>
+         <pose>-0.019 0.03 -0.018 0 0 0</pose>
+         <mass>0.212</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial>
+      <pose>0.088 -0.063 0.002 0 0 0</pose>  
+      <collision name="right_motor_collision">
+        <pose>0.0 0.0 0.0 0.0 3.14 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/motor.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="right_motor_visual">
+        <pose>0.0 0.0 0.0 0.0 3.14 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/motor.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.2 0.2 0.2 1.0</ambient>
+             <diffuse>0.8 0.8 0.8 1.0</diffuse>
+             <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
+    
+    <link name="left_wheel">
+      <inertial>
+         <pose>0.0325 0.01325 0.0325 1.57 0 0</pose>
+         <mass>0.030</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial> 
+      <pose>0.036 -0.168 -0.042 0 0 0</pose>   
+      <collision name="left_wheel_collision">
+        <pose>0.0325 0.01325 0.0325 1.57 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0325</radius>
+            <length>0.0265</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+              <fdir1>0 0 1</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <min_depth>0.005</min_depth>
+              <kp>1e8</kp>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="left_wheel_visual">
+        <pose>0.0 0.0 0.0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/tyre.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
+    
+    <link name="right_wheel">
+      <inertial>
+         <pose>-0.0325 -0.01325 0.0325 1.57 0 0</pose>
+         <mass>0.030</mass>
+         <inertia>
+            <ixx>0.000001</ixx>
+            <iyy>0.000001</iyy>
+            <izz>0.000001</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+         </inertia>
+      </inertial> 
+      <pose>0.101 0.028 -0.042 0 0 0</pose> 
+      <collision name="right_wheel_collision">
+        <pose>-0.0325 -0.01325 0.0325 1.57 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0325</radius>
+            <length>0.0265</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+              <fdir1>0 0 1</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <min_depth>0.005</min_depth>
+              <kp>1e8</kp>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="right_wheel_visual">
+        <pose>0.0 0.0 0.0 0 0 3.14</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bnr_oneA/meshes/tyre.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <gravity>true</gravity>
+    </link>
+
+    
+    
+    <joint type="fixed" name="plastic_bolts">
+        <pose>0.1025 -0.05125 0.004 0 0 0</pose>
+        <child>top</child>
+        <parent>base</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    <joint type="fixed" name="left_motor_bolts">
+        <pose>0.02 -0.05 0.004 0 0 0</pose>
+        <child>left_motor</child>
+        <parent>base</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    <joint type="fixed" name="rigth_motor_bolts">
+        <pose>-0.02 0.05 0.004 0 0 0</pose>
+        <child>right_motor</child>
+        <parent>base</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    
+    <joint type="revolute" name="left_wheel_joint">
+    <pose>0.0325 0.0 0.0325 0 0 0</pose>
+      <child>left_wheel</child>
+      <parent>base</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <use_parent_model_frame>true</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint type="revolute" name="right_wheel_joint">
+    <pose>-0.0325 0.0 0.0325 0 0 0</pose>
+      <child>right_wheel</child>
+      <parent>base</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <use_parent_model_frame>true</use_parent_model_frame>
+      </axis>
+    </joint>
+    
+  </model>
+</sdf>
