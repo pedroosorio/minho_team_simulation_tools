@@ -457,7 +457,17 @@ void Minho_Robot::dribbleGameBall()
     }
     
     if(linear_grip_reducer>1.0) linear_grip_reducer = 1.0;
-    grip_force -= linear_grip_reducer;
+    
+    double rotation_grip_reducer = 0.0;
+    // linear movement
+     if(abs(angular_vel_)<MAX_ROTATION_VEL) rotation_grip_reducer = 0.0;
+     else {
+         rotation_grip_reducer = (1.0/GRIP_DECAY)*abs(angular_vel_)-(MAX_ROTATION_VEL/GRIP_DECAY);   
+     }    
+    
+    if(linear_grip_reducer>1.0) linear_grip_reducer = 1.0;
+    if(rotation_grip_reducer>1.0) rotation_grip_reducer = 1.0;
+    grip_force -= (linear_grip_reducer+rotation_grip_reducer);
     
     // max grip 2/3 of ball inside robot, minimum grip 1/3 of ball inside robot
     math::Vector3 robot_position = math::Vector3((float)model_pose_.pos.x,(float)model_pose_.pos.y,0.0);
