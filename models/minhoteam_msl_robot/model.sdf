@@ -190,6 +190,8 @@
         <ball_kick_angle>45.0</ball_kick_angle>
         <ball_model_name>RoboCup MSL Ball</ball_model_name>
         <vision_range_radius>6.0</vision_range_radius>
+        <max_backwards_grip_vel>30</max_backwards_grip_vel>
+        <grip_decay>25</grip_decay>
     </plugin>
     
   </model>

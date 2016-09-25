@@ -51,6 +51,7 @@ Minho_Robot::Minho_Robot()
     SHOOT_ANGLE = 0.0;
     BALL_MODEL_NAME = "RoboCup MSL Ball";
     VISION_RANGE_RADIUS = 5.0;
+    MAX_BACKWARDS_VEL = GRIP_DECAY = 30.0;
 }
 
 Minho_Robot::~Minho_Robot()
@@ -448,12 +449,13 @@ void Minho_Robot::dribbleGameBall()
     if(mov_direction_>=0.0 && mov_direction_ <= 60.0) linear_grip_reducer = 0.0;
     else if(mov_direction_>=300.0 && mov_direction_ <= 360.0) linear_grip_reducer = 0.0;
     else {
-        if(linear_vel_<40.0) linear_grip_reducer = 0.0;
+        if(linear_vel_<MAX_BACKWARDS_VEL) linear_grip_reducer = 0.0;
         else {
-            linear_grip_reducer = (1.0/50.0)*linear_vel_-(4.0/5.0);   
+            linear_grip_reducer = (1.0/GRIP_DECAY)*linear_vel_-(MAX_BACKWARDS_VEL/GRIP_DECAY);   
         }    
     }
     
+    if(linear_grip_reducer>1.0) linear_grip_reducer = 1.0;
     grip_force -= linear_grip_reducer;
     
     // max grip 2/3 of ball inside robot, minimum grip 1/3 of ball inside robot
@@ -464,8 +466,8 @@ void Minho_Robot::dribbleGameBall()
     math::Vector3 ball_position = robot_position + math::Vector3(distance*cos(robot_heading),distance*sin(robot_heading),0.11);
       
     _ball_->SetWorldPose(math::Pose(ball_position,math::Quaternion(0,0,0,0)));
-    if(mov_direction_>90 && mov_direction_<270){
-        double release_velocity = 0.5;
+    if(mov_direction_>60 && mov_direction_<300){
+        double release_velocity = 0.05*mapVelocity(linear_vel_,MAX_ANG_VEL);
         _ball_->SetLinearVel(math::Vector3(-release_velocity*cos(robot_heading),-release_velocity*sin(robot_heading),0.0));
     }
     else _ball_->SetLinearVel(math::Vector3(0,0,0));
