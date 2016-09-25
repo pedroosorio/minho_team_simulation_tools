@@ -1,9 +1,9 @@
 #ifndef TELEOPPROCESSMANAGER_H
 #define TELEOPPROCESSMANAGER_H
 
-#define PACKAGE "minho_gazebo"
+#define PACKAGE "minho_team_tools"
 #define NODE "minho_teleop"
-#define ARGS "-r"
+#define ARGS "-s"
 #include <QObject>
 #include <QProcess>
 #include <QProcessEnvironment>
@@ -20,6 +20,7 @@ public:
 public slots:
     bool run_process(int process_id);
     bool close_process(int process_id);
+    QString getProcess(int process_id);
 private:
     std::vector<QProcess *> minho_teleop_;
     QProcessEnvironment *env;

@@ -38,8 +38,8 @@ INCLUDEPATH += "/usr/include"
 LIBS += /usr/lib/x86_64-linux-gnu/libprotobuf.so \
         /usr/lib/x86_64-linux-gnu/libgazebo_transport.so \
         /usr/lib/x86_64-linux-gnu/libgazebo_physics.so \
-        /usr/lib/x86_64-linux-gnu/libgazebo_rendering.so \
-        /usr/lib/x86_64-linux-gnu/libgazebo_gui.so \
+       # /usr/lib/x86_64-linux-gnu/libgazebo_rendering.so \
+       # /usr/lib/x86_64-linux-gnu/libgazebo_gui.so \
         /usr/lib/x86_64-linux-gnu/libgazebo_client.so \
         /usr/lib/x86_64-linux-gnu/libgazebo_msgs.so \
         /usr/lib/x86_64-linux-gnu/libgazebo_math.so \

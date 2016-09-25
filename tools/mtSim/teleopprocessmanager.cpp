@@ -29,7 +29,9 @@ bool TeleopProcessManager::run_process(int process_id)
                     this,
                     SLOT(onClose()));
             minho_teleop_[process_id]->start(EXEC_,_args);
-            minho_teleop_[process_id]->waitForStarted(-1);
+//            qDebug() << _args;
+            if(!minho_teleop_[process_id]->waitForStarted(500)) return false;
+            else return true;
         } else return false;
     }
 
@@ -48,6 +50,17 @@ bool TeleopProcessManager::close_process(int process_id)
         }
         else return false;
     } else return false;
+}
+
+QString TeleopProcessManager::getProcess(int process_id)
+{
+    if(process_id>=0 && process_id<(int)minho_teleop_.size()){
+        if(minho_teleop_[process_id]) {
+            return minho_teleop_[process_id]->arguments().join(" ");
+        }
+    }
+
+    return "Invalid Process ID";
 }
 
 void TeleopProcessManager::onClose()
