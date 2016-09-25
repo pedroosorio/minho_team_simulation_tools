@@ -218,7 +218,7 @@ namespace gazebo
     float VISION_RANGE_RADIUS;
     float MAX_BACKWARDS_VEL;
     float GRIP_DECAY;
-    
+    float MAX_ROTATION_VEL;
     /// \brief pointer to world's set pose mutex. This pointer will make changes to the
     /// models become more thread safe.
     boost::mutex *world_mutex_;

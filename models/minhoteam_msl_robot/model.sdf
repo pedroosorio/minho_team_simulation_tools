@@ -191,6 +191,7 @@
         <ball_model_name>RoboCup MSL Ball</ball_model_name>
         <vision_range_radius>6.0</vision_range_radius>
         <max_backwards_grip_vel>30</max_backwards_grip_vel>
+        <max_rotation_grip_vel>30</max_rotation_grip_vel>
         <grip_decay>24</grip_decay>
     </plugin>
     

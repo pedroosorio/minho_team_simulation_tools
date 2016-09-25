@@ -51,7 +51,7 @@ Minho_Robot::Minho_Robot()
     SHOOT_ANGLE = 0.0;
     BALL_MODEL_NAME = "RoboCup MSL Ball";
     VISION_RANGE_RADIUS = 5.0;
-    MAX_BACKWARDS_VEL = GRIP_DECAY = 30.0;
+    MAX_BACKWARDS_VEL = GRIP_DECAY = MAX_ROTATION_VEL = 30.0;
 }
 
 Minho_Robot::~Minho_Robot()
@@ -523,6 +523,18 @@ void Minho_Robot::initializePluginParameters(sdf::ElementPtr _sdf)
     
     if(_sdf->HasElement("vision_range_radius")){
         _sdf->GetElement("vision_range_radius")->GetValue()->Get(VISION_RANGE_RADIUS);
+    } else ROS_WARN("No vision range radius parameter defined in plugin's SDF");
+    
+    if(_sdf->HasElement("max_backwards_grip_vel")){
+        _sdf->GetElement("max_backwards_grip_vel")->GetValue()->Get(MAX_BACKWARDS_VEL);
+    } else ROS_WARN("No max grip backwards velocity parameter defined in plugin's SDF");
+    
+    if(_sdf->HasElement("max_rotation_grip_vel")){
+        _sdf->GetElement("max_rotation_grip_vel")->GetValue()->Get(MAX_ROTATION_VEL);
+    } else ROS_WARN("No max grip rotation velocity parameter defined in plugin's SDF");
+    
+    if(_sdf->HasElement("grip_decay")){
+        _sdf->GetElement("grip_decay")->GetValue()->Get(GRIP_DECAY);
     } else ROS_WARN("No vision range radius parameter defined in plugin's SDF");
 }
 
