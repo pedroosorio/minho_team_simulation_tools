@@ -42,7 +42,7 @@ void Minho_World::Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf)
     world_ = _parent;
     node_->Init(_parent->GetName());
     initPluginConfiguration(_sdf);
-    
+    world_mutex_ = _parent->GetSetWorldPoseMutex();
     //Init subsciber and publisher
     factory_pub_ = node_->Advertise<gazebo::msgs::Factory>("/gazebo/default/factory");
     cmd_sub_ = node_->Subscribe("/gazebo/default/factorybridge", &Minho_World::parseCommand);
@@ -133,12 +133,14 @@ void Minho_World::deleteModel(std::string name)
 {
     bool model_deleted = false;
     models_ = world_->GetModels();   // get models
+
     for(unsigned int i = 0; i<models_.size(); i++){
         if(name.compare(models_[i]->GetName())==0){
-            //world_->RemoveModel(models_[i]); 
+            ROS_INFO("Found model to be deleted.");
+            //world_->RemoveModel(models_[i]->GetName()); 
             model_deleted = true;   
         }
-    } 
+    }
     
     if(model_deleted) ROS_INFO("\nDeleted model '%s'",name.c_str());
     else ROS_INFO("\nFailed to delete model '%s'",name.c_str());

@@ -173,9 +173,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         case Qt::Key_Control:{
             modCtrl_ = true;
+            break;
         }
         case Qt::Key_Shift:{
             modShift_ = true;
+            break;
         }
         // Shortcuts for robot management
         case Qt::Key_F1:{

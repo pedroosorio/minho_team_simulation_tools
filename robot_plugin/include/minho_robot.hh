@@ -20,6 +20,9 @@
 #include <ros/callback_queue.h> 
 #include <ros/subscribe_options.h>
 #include <sdf/Param.hh>
+#include <boost/thread/thread_time.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/mutex.hpp>
 
 #define DEG_TO_RAD M_PI/180.0
 #define RAD_TO_DEG 180.0/M_PI
@@ -214,6 +217,9 @@ namespace gazebo
     std::string BALL_MODEL_NAME;
     float VISION_RANGE_RADIUS;
     
+    /// \brief pointer to world's set pose mutex. This pointer will make changes to the
+    /// models become more thread safe.
+    boost::mutex *world_mutex_;
    
   };
 }

@@ -24,10 +24,10 @@
       <uri>model://robocup_msl_ball</uri>
     </include>
     
-    <!-- Testing robot -->
+    <!-- Testing robot-->
     <include>
       <uri>model://minhoteam_msl_robot</uri>
-    </include>
+    </include> 
     
     
     <plugin filename="libminho_world.so" name="minho_world">

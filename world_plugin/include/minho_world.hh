@@ -85,6 +85,10 @@ namespace gazebo
     /// \brief pointer to subscriver over gz_string topic, to receive
     /// add or delete comands for models in the simulation.
     gazebo::transport::SubscriberPtr cmd_sub_;
+    
+    /// \brief mutex to synchronize threads when adding or removing models 
+    /// from world, increasing thread-safety.
+    boost::mutex *world_mutex_;
   };
 }
 #endif

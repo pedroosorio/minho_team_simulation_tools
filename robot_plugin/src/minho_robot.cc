@@ -43,7 +43,9 @@ Minho_Robot::Minho_Robot()
     game_ball_in_world_ = false;
     poss_threshold_distance_ = 0.3;
     kick_requested_ = false;
-    MAX_LIN_VEL = 2.5; // Default values
+    
+    // Default values
+    MAX_LIN_VEL = 2.5;
     MAX_ANG_VEL = 15.0;
     MAX_BALL_VEL = 8.0;
     SHOOT_ANGLE = 0.0;
@@ -70,19 +72,25 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     _node_ = transport::NodePtr(new transport::Node());
     _node_->Init(_model_->GetWorld()->GetName());
     model_id_ = _model_->GetId();
+    // Stop simulation to prevent odd behaviors
+    gazebo::physics::WorldPtr world = _model_->GetWorld();
+    world_mutex_ = world->GetSetWorldPoseMutex();
+    bool pauseState = world->IsPaused();
+    world->SetPaused(true);
+    world->DisableAllModels();
+    world->EnablePhysicsEngine(false);
+
     initializePluginParameters(_sdf);
     autoRenameRobot();
-    ROS_WARN("Loading Minho_Robot for '%s' ...", _model_->GetName().c_str());
+    
+    ROS_WARN("Loading Minho_Robot Plugin for '%s' ...", _model_->GetName().c_str());
     
     if (!ros::isInitialized()){
         ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin.");
         is_ros_initialized_ = false;
     } else is_ros_initialized_ = true;
-
-    //Place the robot in the initial position regarding its team_id_
-    initial_pose_.pos.x = 0.8*(float)team_id_;
-    _model_->SetWorldPose(initial_pose_);
-
+    
+    // Initialize ROS interface
     if(!is_ros_initialized_){
         ROS_ERROR("Plugin ROS failed to start on '%s'. \n", _model_->GetName().c_str());
     } else {
@@ -133,6 +141,14 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     for(unsigned int m = 0;m<models_.size();m++) models_list << "\n\t\t\t\tModel " << m << " -> " << models_[m]->GetName();
     models_list << "\n";
     ROS_INFO("%s",models_list.str().c_str());
+      
+    world->EnablePhysicsEngine(true);
+    world->EnableAllModels();
+    world->SetPaused(pauseState);
+    
+    //Place the robot in the initial position regarding its team_id_
+    initial_pose_.pos.x = 0.8*(float)team_id_;
+    _model_->SetWorldPose(initial_pose_);
 }
 
 void Minho_Robot::applyVelocities(math::Vector3 command)
@@ -265,6 +281,7 @@ void Minho_Robot::onUpdate()
     static int kick_timer = 0;
     // lock resources
     control_info_mutex_.lock();
+    
     model_pose_ = _model_->GetWorldPose(); // get robot position
     getGameBallModel(); // finds and computes distance to game ball
 
@@ -288,26 +305,26 @@ void Minho_Robot::onUpdate()
 void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
 {
     // lock resources
-    control_info_mutex_.lock();
+   control_info_mutex_.lock();
     
-    if(teleop_active_){
-        if(msg->is_teleop) {
-            //Apply robot velocities
-            linear_vel_ = msg->linear_velocity;
-            mov_direction_ = msg->movement_direction;
-            angular_vel_ = msg->angular_velocity;
-            applyVelocities(math::Vector3(msg->linear_velocity, msg->movement_direction, msg->angular_velocity));
-            //Apply dribbling
-            dribblers_on_ = msg->dribbler_on;
-            //Apply ball kicking
-            if(msg->kick_strength>0){
-                kick_requested_ = true;
-                kick_force_ = msg->kick_strength;
-                kick_dir_ = msg->kick_direction;
-                kick_is_pass_ = msg->kick_is_pass;
-                dribblers_on_ = false;
-            }
-        }
+   if(teleop_active_){
+     if(msg->is_teleop) {
+         //Apply robot velocities
+         linear_vel_ = msg->linear_velocity;
+         mov_direction_ = msg->movement_direction;
+         angular_vel_ = msg->angular_velocity;
+         applyVelocities(math::Vector3(msg->linear_velocity, msg->movement_direction, msg->angular_velocity));
+         //Apply dribbling
+         dribblers_on_ = msg->dribbler_on;
+         //Apply ball kicking
+         if(msg->kick_strength>0){
+             kick_requested_ = true;
+             kick_force_ = msg->kick_strength;
+             kick_dir_ = msg->kick_direction;
+             kick_is_pass_ = msg->kick_is_pass;
+             dribblers_on_ = false;
+         }
+     }
     } else { // Autonomous
         if(!msg->is_teleop) {
             //Apply robot velocities
@@ -330,6 +347,7 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
     
     // unlock resources
     control_info_mutex_.unlock();
+
 }
 
 void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
@@ -341,7 +359,6 @@ void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
     if(teleop_active_)ROS_INFO("Teleop activated for '%s'.",_model_->GetName().c_str());
     else ROS_INFO("Teleop deactivated for '%s'.",_model_->GetName().c_str());
     
-
     // unlock resources
     tele_op_mutex_.unlock();
 }
@@ -553,5 +570,5 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
 
 void Minho_Robot::onReset()
 {
-    _model_->SetWorldPose(initial_pose_);   
+   _model_->SetWorldPose(initial_pose_);  
 }
