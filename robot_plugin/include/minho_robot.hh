@@ -216,6 +216,8 @@ namespace gazebo
     float MAX_LIN_VEL, MAX_ANG_VEL, MAX_BALL_VEL, SHOOT_ANGLE;
     std::string BALL_MODEL_NAME;
     float VISION_RANGE_RADIUS;
+    float MAX_BACKWARDS_VEL;
+    float GRIP_DECAY;
     
     /// \brief pointer to world's set pose mutex. This pointer will make changes to the
     /// models become more thread safe.
