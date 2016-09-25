@@ -4,6 +4,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    qRegisterMetaType<std::vector<gazebo::msgs::Pose> >("std::vector<gazebo::msgs::Pose>");
     // Start Resources
     MainWindow w;
     QSplashScreen *screen = new QSplashScreen();

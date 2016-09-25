@@ -974,28 +974,7 @@
          </widget>
         </item>
         <item row="5" column="0">
-         <widget class="QTableWidget" name="tableWidget">
-          <column>
-           <property name="text">
-            <string>Model Name</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>New Column</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>X (m)</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Orientation (º)</string>
-           </property>
-          </column>
-         </widget>
+         <widget class="QTableWidget" name="tableWidget"/>
         </item>
        </layout>
       </widget>
