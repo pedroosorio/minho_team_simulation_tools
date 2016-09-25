@@ -413,7 +413,8 @@ void Minho_Robot::publishRobotInfo()
     // Robot pose
     msg.robot_pose.x = model_pose_.pos.x;
     msg.robot_pose.y = model_pose_.pos.y;
-    msg.robot_pose.z = model_pose_.rot.GetAsEuler().z + (float)M_PI/2.0;
+    msg.robot_pose.z = -model_pose_.rot.GetAsEuler().z+M_PI;
+    // Orientation transposed to values used in our referential
     // Ball position
     if(game_ball_in_world_ && distance_to_ball_<=VISION_RANGE_RADIUS) { 
         // Add noise
