@@ -21,6 +21,7 @@ public slots:
     bool run_process(int process_id);
     bool close_process(int process_id);
     QString getProcess(int process_id);
+    bool isProcessRunning(int process_id);
 private:
     std::vector<QProcess *> minho_teleop_;
     QProcessEnvironment *env;

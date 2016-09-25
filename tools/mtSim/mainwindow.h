@@ -47,6 +47,7 @@ private slots:
     void on_pushButton_8_clicked();
 
     void update_world_stats(QString pause,QString sim_time,QString real_time);
+    void update_model_poses(std::vector<gazebo::msgs::Pose> poses);
     void on_pushButton_9_clicked();
 
     void on_tele_open_1_clicked();

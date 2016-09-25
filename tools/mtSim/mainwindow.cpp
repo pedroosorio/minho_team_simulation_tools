@@ -15,8 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
     _sim_control_ = new WorldManager();
     connect(_sim_control_,SIGNAL(new_world_stats(QString,QString,QString)),this,
                            SLOT(update_world_stats(QString,QString,QString)));
+    connect(_sim_control_,SIGNAL(new_poses(std::vector<gazebo::msgs::Pose>)),this,
+                           SLOT(update_model_poses(std::vector<gazebo::msgs::Pose>));
     scene = _gfx_sim_->getScene();
     minho_manager = new TeleopProcessManager(6);
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -164,9 +167,72 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         case Qt::Key_Control:{
             modCtrl_ = true;
+            break;
         }
         case Qt::Key_Shift:{
             modShift_ = true;
+            break;
+        }
+
+        // Shortcuts for robot management
+        case Qt::Key_F1:{
+            if(event->modifiers()&&Qt::ControlModifier){ //Put robot in/out
+
+            } else {
+                if(minho_manager->isProcessRunning(0)){ //Teleop on/off
+                    minho_manager->close_process(0);
+                } else minho_manager->run_process(0);
+            }
+            break;
+        }
+        case Qt::Key_F2:{
+            if(event->modifiers()&&Qt::ControlModifier){ //Put robot in/out
+
+            } else {
+                if(minho_manager->isProcessRunning(1)){ //Teleop on/off
+                    minho_manager->close_process(1);
+                } else minho_manager->run_process(1);
+            } break;
+        }
+        case Qt::Key_F3:{
+            if(event->modifiers()&&Qt::ControlModifier){ //Put robot in/out
+
+            } else {
+                if(minho_manager->isProcessRunning(2)){ //Teleop on/off
+                    minho_manager->close_process(2);
+                } else minho_manager->run_process(2);
+            }
+            break;
+        }
+        case Qt::Key_F4:{
+            if(event->modifiers()&&Qt::ControlModifier){ //Put robot in/out
+
+            } else {
+                if(minho_manager->isProcessRunning(3)){ //Teleop on/off
+                    minho_manager->close_process(3);
+                } else minho_manager->run_process(3);
+            }
+            break;
+        }
+        case Qt::Key_F5:{
+            if(event->modifiers()&&Qt::ControlModifier){ //Put robot in/out
+
+            } else {
+                if(minho_manager->isProcessRunning(4)){ //Teleop on/off
+                    minho_manager->close_process(4);
+                } else minho_manager->run_process(4);
+            }
+            break;
+        }
+        case Qt::Key_F6:{
+            if(event->modifiers()&&Qt::ControlModifier){ //Put robot in/out
+
+            } else {
+                if(minho_manager->isProcessRunning(5)){ //Teleop on/off
+                    minho_manager->close_process(5);
+                } else minho_manager->run_process(5);
+            }
+            break;
         }
     }
 }
@@ -242,6 +308,11 @@ void MainWindow::update_world_stats(QString pause, QString sim_time, QString rea
     ui->lb_sim_time->setText(sim_time);
     ui->lb_real_time->setText(real_time);
     ui->lb_fps->setText(QString::number(_gfx_sim_->getFPS()));
+}
+
+void MainWindow::update_model_poses(std::vector<gazebo::msgs::Pose> poses)
+{
+    ui->tableWidget->clearContents();
 }
 
 void MainWindow::on_pushButton_9_clicked()

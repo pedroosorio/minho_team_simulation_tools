@@ -63,6 +63,16 @@ QString TeleopProcessManager::getProcess(int process_id)
     return "Invalid Process ID";
 }
 
+bool TeleopProcessManager::isProcessRunning(int process_id)
+{
+    if(process_id>=0 && process_id<(int)minho_teleop_.size()){
+        if(minho_teleop_[process_id]) {
+            return (minho_teleop_[process_id]->state()==QProcess::Running);
+        }
+        else return false;
+    } else return false;
+}
+
 void TeleopProcessManager::onClose()
 {
     QProcess *process = (QProcess *)this->sender();

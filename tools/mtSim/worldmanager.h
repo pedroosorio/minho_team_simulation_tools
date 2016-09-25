@@ -102,6 +102,18 @@ public slots:
     /// \param name of the model to be removed.
     ///
     void removeModel(QString name);
+
+    ///
+    /// \brief isModelInWorld detects if a specific model named "name" is already
+    /// spawned.
+    /// \param name name of the model to look for.
+    ///
+    bool isModelInWorld(QString name);
+    ///
+    /// \brief getModels returns the existing models in the world.
+    /// \return list of model's poses.
+    ///
+    std::vector<gazebo::msgs::Pose> getModels();
 private slots:
 
     ///
@@ -117,6 +129,11 @@ private slots:
     /// \param _msg
     ///
     void world_stats_callback(ConstWorldStatisticsPtr &_msg);
+    ///
+    /// \brief model_pose_callback callback to receive model pose information.
+    /// \param _msg
+    ///
+    void model_pose_callback(ConstPosesStampedPtr &_msg);
 private:
     // Variables
     // *******************************************************************************************
@@ -159,10 +176,21 @@ private:
     ///
     gazebo::common::Time simTime_, realTime_;
     ///
-    /// \brief manage_pub_ publisher to publish data to add or remove models from simulation
+    /// \brief manage_pub_ publisher to publish data to add or remove models from simulation.
     ///
     gazebo::transport::PublisherPtr manage_pub_;
-
+    ///
+    /// \brief modelsList holds the models list names of the world.
+    ///
+    std::vector<QString> modelsList;
+    ///
+    /// \brief model_list_sub_ Subscriber for model state string, to receive spawned model names.
+    ///
+    gazebo::transport::SubscriberPtr model_list_sub_;
+    ///
+    /// \brief models vector to hold pose information about models in the world.
+    ///
+    std::vector<gazebo::msgs::Pose> models;
 signals:
     ///
     /// \brief new_world_stats signal feeded to the GUI (mainwindow) to display simulation information
@@ -172,6 +200,11 @@ signals:
     /// \param real_time - Real time of the simulation. Please refer to getRealTime();
     ///
     void new_world_stats(QString state,QString sim_time, QString real_time);
+    ///
+    /// \brief new_poses signals that new poses have been received so the GUI can display them.
+    /// \param poses is a vector of poses of the models present in the world.
+    ///
+    void new_poses(std::vector<gazebo::msgs::Pose> poses);
 };
 
 #endif // WORLDMANAGER_H

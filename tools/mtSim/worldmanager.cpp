@@ -10,9 +10,11 @@ WorldManager::WorldManager(QObject *parent) : QObject(parent)
 {
     gazebo::transport::NodePtr node(new gazebo::transport::Node());
     _ptr_ = node;
+    modelsList.clear();
     node->Init("default");
     _world_pub_ = node->Advertise<gazebo::msgs::WorldControl>("/gazebo/default/world_control");
     _world_sub_ = node->Subscribe("/gazebo/default/world_stats",&WorldManager::world_stats_callback,this);
+    model_list_sub_ = node->Subscribe("/gazebo/default/pose/info",&WorldManager::model_pose_callback,this);
     manage_pub_ = node->Advertise<gazebo::msgs::GzString>("/gazebo/default/factorybridge");
     if(!_world_pub_->WaitForConnection(gazebo::common::Time(1,0))) throwConnectionError();
 }
@@ -128,6 +130,20 @@ void WorldManager::removeModel(QString name)
     if(manage_pub_) manage_pub_->Publish(msg,true);
 }
 
+bool WorldManager::isModelInWorld(QString name)
+{
+    for(unsigned int i = 0;i<modelsList.size();i++){
+        if(name==modelsList[i]) return true;
+    }
+
+    return false;
+}
+
+std::vector<gazebo::msgs::Pose> WorldManager::getModels()
+{
+    return models;
+}
+
 ///
 /// \brief throwConnectionError throws a message and quits the simulator if a critical error is
 /// encountered.
@@ -160,4 +176,24 @@ void WorldManager::world_stats_callback(ConstWorldStatisticsPtr &_msg)
     real_time_ = QString::fromStdString(realTime_.FormattedString(gazebo::common::Time::HOURS
                                                                   ,gazebo::common::Time::MILLISECONDS));
     emit new_world_stats(getState(),sim_time_,real_time_);
+}
+
+void WorldManager::model_pose_callback(ConstPosesStampedPtr &_msg)
+{
+    std::vector<QString> list;
+    std::vector<gazebo::msgs::Pose> poses;
+    gazebo::msgs::Pose pose;
+    QString name;
+    unsigned int list_size = _msg->pose_size();
+    for(unsigned int i = 0; i<list_size;i++){
+        pose = _msg->pose(i);
+        name = QString::fromStdString(pose.name());
+        if(!name.contains(":")){ // If it's not a model's link
+            list.push_back(name);
+            poses.push_back(pose);
+        }
+    }
+    modelsList = list;
+    models = poses;
+    emit new_poses(models);
 }
