@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 	message_generation	
 	sensor_msgs
 	genmsg	
-	minho_team_ros		
+	minho_team_ros	
 )
 
 
