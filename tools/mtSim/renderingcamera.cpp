@@ -54,7 +54,6 @@ void RenderingCamera::initalizeVariables()
     g_fps_ = 0.0;
     _rendering_timer_ = new QTimer();
     connect(_rendering_timer_,SIGNAL(timeout()),this,SLOT(renderCamera()));
-    _pixmap_item_ = new QGraphicsPixmapItem();
 }
 
 ///
@@ -335,13 +334,12 @@ void RenderingCamera::renderCamera()
     if(_g_image_){
         g_fps_ = 1000.0/(double)timer_.elapsed();
         timer_.start();
-        unsigned char *_data = _g_image_->GetData<unsigned char>();
-        QImage _img(_data,_g_image_->GetWidth(),_g_image_->GetHeight(),
-        _g_image_->GetWidth()*_g_image_->GetDepth()*sizeof(unsigned char),QImage::Format_RGB888);
-        delete _pixmap_item_;
-        _pixmap_item_ = new QGraphicsPixmapItem(QPixmap::fromImage(_img));
         _scene_->clear();
-        _scene_->addItem(_pixmap_item_);
+        _scene_->addPixmap(QPixmap::fromImage(QImage(_g_image_->GetData<unsigned char>()
+                                                     ,_g_image_->GetWidth()
+                                                     ,_g_image_->GetHeight(),
+        _g_image_->GetWidth()*_g_image_->GetDepth()*sizeof(unsigned char),QImage::Format_RGB888)));
+        // Resizing
         recent_ = _render_screen_->size();
         if(recent_!=last_){
             _g_camera_->SetImageWidth(recent_.width());

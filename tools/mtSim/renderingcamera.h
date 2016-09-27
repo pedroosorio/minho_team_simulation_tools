@@ -14,8 +14,6 @@
 #include <QMessageBox>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsTextItem>
 
 #include <stdlib.h>
 #include <gazebo/gazebo.hh>
@@ -306,10 +304,6 @@ private:
     /// _render_screen_ .
     ///
     QGraphicsScene *_scene_;
-    ///
-    /// \brief _pixmap_item_ holder for elements to be rendered in the scene.
-    ///
-    QGraphicsPixmapItem* _pixmap_item_;
     ///
     /// \brief _manager_ manages the scene used by the rendering engine, updating the scene to
     /// be rendered.
