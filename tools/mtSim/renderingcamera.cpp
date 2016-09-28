@@ -286,9 +286,9 @@ CameraPtr RenderingCamera::CreateCamera(const std::string &_engine)
     // Parse info from camera_conf.xml
     camera->SetLocalPosition(view_.g_cameraXPosition, view_.g_cameraYPosition, view_.g_cameraZPosition);
     camera->SetLocalRotation(0.0, view_.g_cameraPitchRotation, view_.g_cameraYawRotation);
-    camera->SetImageWidth(480);
-    camera->SetImageHeight(480);
-    camera->SetAntiAliasing(2);
+    camera->SetImageWidth(280);
+    camera->SetImageHeight(280);
+    camera->SetAntiAliasing(5);
     camera->SetAspectRatio(1.0);
     camera->SetHFOV((float)(M_PI/2.0));
     _root_->AddChild(camera);
@@ -331,24 +331,19 @@ void RenderingCamera::renderCamera()
 {
     _manager_->UpdateScenes();
     _g_camera_->Capture(*_g_image_); // Search for improvements for render procedure to boost fps
+    float h_scale_factor = 1.0, w_scale_factor = 1.0;
     if(_g_image_){
         g_fps_ = 1000.0/(double)timer_.elapsed();
         timer_.start();
         _scene_->clear();
+        recent_ = _render_screen_->size();
         _scene_->addPixmap(QPixmap::fromImage(QImage(_g_image_->GetData<unsigned char>()
                                                      ,_g_image_->GetWidth()
                                                      ,_g_image_->GetHeight(),
-        _g_image_->GetWidth()*_g_image_->GetDepth()*sizeof(unsigned char),QImage::Format_RGB888)));
-        // Resizing
-        recent_ = _render_screen_->size();
-        if(recent_!=last_){
-            _g_camera_->SetImageWidth(recent_.width());
-            _g_camera_->SetImageHeight(recent_.height());
-            _g_camera_->SetAspectRatio((double)_g_camera_->GetImageWidth()/(double)_g_camera_->GetImageHeight());
-            gz::Image image = _g_camera_->CreateImage();
-            _g_image_ = std::make_shared<gz::Image>(image);
-        }
-        last_ = recent_;
+        _g_image_->GetWidth()*_g_image_->GetDepth()*sizeof(unsigned char),QImage::Format_RGB888)).scaled(
+                               QSize(recent_.width(),recent_.height()),
+                               Qt::IgnoreAspectRatio,
+                               Qt::SmoothTransformation));
     }
 }
 
