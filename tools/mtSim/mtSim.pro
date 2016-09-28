@@ -46,7 +46,8 @@ LIBS += /usr/lib/x86_64-linux-gnu/libprotobuf.so \
         /usr/lib/x86_64-linux-gnu/libgazebo_common.so \
         /usr/lib/x86_64-linux-gnu/libgazebo.so \
         /usr/lib/x86_64-linux-gnu/libignition-math2.so \
-        /usr/lib/x86_64-linux-gnu/libboost_system.so
+        /usr/lib/x86_64-linux-gnu/libboost_system.so   \
+        /usr/lib/x86_64-linux-gnu/libboost_thread.so
 
 LIBS += `pkg-config --libs ignition-rendering`
 

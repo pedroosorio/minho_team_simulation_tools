@@ -25,7 +25,7 @@
 #include "ignition/rendering/Image.hh"
 #include "ignition/rendering/Scene.hh"
 #include "ignition/rendering.hh"
-#include "pthread.h"
+#include <boost/thread.hpp>
 
 using namespace ignition;
 using namespace rendering;
