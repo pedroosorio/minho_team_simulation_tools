@@ -40,7 +40,7 @@ RenderingCamera::~RenderingCamera()
 ///
 void RenderingCamera::startRendering()
 {
-    _rendering_timer_->start(30);
+    _rendering_timer_->start(20);
 }
 
 ///
@@ -280,9 +280,9 @@ ScenePtr RenderingCamera::CreateScene(const std::string &_engine)
 ///
 CameraPtr RenderingCamera::CreateCamera(const std::string &_engine)
 {
-    ScenePtr scene = CreateScene(_engine);
-    _root_ = scene->GetRootVisual();
-    CameraPtr camera = scene->CreateCamera("camera");
+    ScenePtr scene_ = CreateScene(_engine);
+    _root_ = scene_->GetRootVisual();
+    CameraPtr camera = scene_->CreateCamera("camera");
     // Parse info from camera_conf.xml
     camera->SetLocalPosition(view_.g_cameraXPosition, view_.g_cameraYPosition, view_.g_cameraZPosition);
     camera->SetLocalRotation(0.0, view_.g_cameraPitchRotation, view_.g_cameraYawRotation);
@@ -330,8 +330,11 @@ void RenderingCamera::throwConnectionError()
 void RenderingCamera::renderCamera()
 {
     _manager_->UpdateScenes();
-    _g_camera_->Capture(*_g_image_); // Search for improvements for render procedure to boost fps
-    float h_scale_factor = 1.0, w_scale_factor = 1.0;
+    _g_camera_->PreRender();
+    _g_camera_->Render(); //35 ms
+    _g_camera_->PostRender();
+    _g_camera_->GetImageData(*_g_image_); //10ms
+
     if(_g_image_){
         g_fps_ = 1000.0/(double)timer_.elapsed();
         timer_.start();
