@@ -358,7 +358,13 @@ void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
     
     teleop_active_ = msg->set_teleop;
     if(teleop_active_)ROS_INFO("Teleop activated for '%s'.",_model_->GetName().c_str());
-    else ROS_INFO("Teleop deactivated for '%s'.",_model_->GetName().c_str());
+    else { 
+      ROS_INFO("Teleop deactivated for '%s'.",_model_->GetName().c_str());
+      linear_vel_ = 0;
+      mov_direction_ = 0;
+      angular_vel_ = 0;
+      kick_requested_ = false;
+    }
     
     // unlock resources
     tele_op_mutex_.unlock();
