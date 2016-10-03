@@ -6,6 +6,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    // INITALIZE BASE SYSTEM AND GAZEBO SERVER
+    // ############################################
+    if(isROSRunning()){qDebug() << "[Msg] ROSCORE already running ...";}
+    else { killROS(); startROS(); }
+
+    if(isGazeboRunning()){killGazebo(); qDebug() << "[Msg] GZSERVER already running. Killing running instances ...";  startGazebo();}
+    else { killGazebo(); startGazebo(); }
+    // ############################################
     initializeGUI();
     _gfx_sim_ = new RenderingCamera(ui->graphicsView);
     ui->graphicsView->setRenderingCamera(_gfx_sim_);
@@ -25,6 +33,116 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+bool MainWindow::isROSRunning()
+{
+    QProcess ros_finder;
+    QString program = "pgrep";
+    QStringList args;
+    args.push_back("-c");
+    args.push_back("ros");
+    ros_finder.start(program,args);
+    ros_finder.waitForFinished(1000);
+
+    QString ret = ros_finder.readAll();
+    if(ret.size()!=2) return false;
+
+    ret.chop(1);
+    int n_processes = ret.toInt();
+
+    if(n_processes==3) return true;
+    else return false;
+}
+
+bool MainWindow::isGazeboRunning()
+{
+    QProcess gazebo_finder;
+    QString program = "pgrep";
+    QStringList args;
+    args.push_back("-c");
+    args.push_back("gzserver");
+    gazebo_finder.start(program,args);
+    gazebo_finder.waitForFinished(1000);
+
+    QString ret = gazebo_finder.readAll();
+    if(ret.size()!=2) return false;
+
+    ret.chop(1);
+    int n_processes = ret.toInt();
+
+    if(n_processes>=1) return true;
+    else return false;
+}
+
+void MainWindow::killROS()
+{
+    QProcess ros_killer;
+    QString program = "pkill";
+    QStringList args;
+    args.push_back("-f");
+    args.push_back("ros");
+    ros_killer.start(program,args);
+    ros_killer.waitForFinished(1000);
+}
+
+void MainWindow::startROS()
+{
+    QString program = "roscore";
+    QStringList args;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    ros_runner.setProcessEnvironment(env);
+    qDebug() << "[Msg] Starting ROSCORE ...";
+    connect(&ros_runner,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(rosKilled(int,QProcess::ExitStatus)));
+    ros_runner.start(program,args);
+}
+
+void MainWindow::rosKilled(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug() << "[WARN] ROSCORE killed : " << exitStatus << "(" << exitCode << ")";
+}
+
+void MainWindow::killGazebo()
+{
+    QProcess gzserver_killer;
+    QString program = "pkill";
+    QStringList args;
+    args.push_back("-f");
+    args.push_back("gzserver");
+    gzserver_killer.start(program,args);
+    gzserver_killer.waitForFinished(1000);
+
+    QProcess gzclient_killer;
+    program = "pkill";
+    args.clear();
+    args.push_back("-f");
+    args.push_back("gzclient");
+    gzclient_killer.start(program,args);
+    gzclient_killer.waitForFinished(1000);
+}
+
+void MainWindow::startGazebo()
+{
+    QString program = "rosrun";
+    QStringList args;
+    args.push_back("gazebo_ros");
+    args.push_back("gzserver");
+    args.push_back("msl.world"); //Default world
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString home = env.value("HOME");
+    QString gz_rsc_path = ":/usr/share/gazebo-7";
+    gz_rsc_path+=":"+home+"/catkin_ws/src/minho_team_simulation_tools/worlds";
+    if(!env.contains("GAZEBO_RESOURCE_PATH")) env.insert("GAZEBO_RESOURCE_PATH",gz_rsc_path);
+    gazebo_runner.setProcessEnvironment(env);
+    qDebug() << "[Msg] Starting GZSERVER ...";
+    connect(&gazebo_runner,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(gazeboKilled(int,QProcess::ExitStatus)));
+    gazebo_runner.start(program,args);
+    gazebo_runner.waitForStarted(10000);
+}
+
+void MainWindow::gazeboKilled(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug() << "[WARN] GZSERVER killed : " << exitStatus << "(" << exitCode << ")";
 }
 
 void MainWindow::start()
@@ -269,6 +387,11 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    disconnect(&ros_runner,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(rosKilled(int,QProcess::ExitStatus)));
+    disconnect(&gazebo_runner,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(gazeboKilled(int,QProcess::ExitStatus)));
+    ros_runner.terminate();
+    gazebo_runner.terminate();
+    while(ros_runner.state()!=QProcess::NotRunning && gazebo_runner.state()!=QProcess::NotRunning);
     _sim_control_->~WorldManager();
     _gfx_sim_->~RenderingCamera();
     event->accept();

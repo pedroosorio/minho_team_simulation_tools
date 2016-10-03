@@ -27,6 +27,14 @@ private slots:
     void initializeGUI();
     void readCameraConf();
     void readRosServiceConf();
+    bool isROSRunning();
+    bool isGazeboRunning();
+    void killROS();
+    void startROS();
+    void rosKilled(int exitCode, QProcess::ExitStatus exitStatus);
+    void killGazebo();
+    void startGazebo();
+    void gazeboKilled(int exitCode, QProcess::ExitStatus exitStatus);
 
     vector<_cameraview> parseCameraViewList(QDomNodeList list);
     _cameraview parseView(QDomElement view);
@@ -108,6 +116,7 @@ private:
     QGraphicsScene *scene;
     TeleopProcessManager *minho_manager;
     bool modCtrl_, modShift_;
+    QProcess ros_runner, gazebo_runner;
 
 };
 
