@@ -360,9 +360,7 @@ void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
     if(teleop_active_)ROS_INFO("Teleop activated for '%s'.",_model_->GetName().c_str());
     else { 
       ROS_INFO("Teleop deactivated for '%s'.",_model_->GetName().c_str());
-      linear_vel_ = 0;
-      mov_direction_ = 0;
-      angular_vel_ = 0;
+      linear_velocity_ = angular_velocity_ = math::Vector3(0.0,0.0,0.0);
       kick_requested_ = false;
     }
     
