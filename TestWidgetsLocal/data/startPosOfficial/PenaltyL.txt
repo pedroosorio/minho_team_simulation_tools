@@ -1,0 +1,15 @@
+Robo1x:-8.586
+Robo1y:0.018
+Robo1a:280
+Robo2x:-5.058
+Robo2y:-2.97
+Robo2a:0
+Robo3x:-4.212
+Robo3y:-2.97
+Robo3a:0
+Robo4x:-5.166
+Robo4y:3.402
+Robo4a:180
+Robo5x:-4.05
+Robo5y:3.402
+Robo5a:180

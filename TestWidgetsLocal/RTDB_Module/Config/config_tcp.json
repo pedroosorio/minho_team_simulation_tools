@@ -1,0 +1,8 @@
+{
+  "robot_ip": "172.16.49.31",
+  "BS_port": 45454,
+  "BS_ip": "172.16.49.31",
+  "robot_port": 45454,
+  "broadcast_port": 45454,
+  "broadcast_ip": "172.16.49.255"
+}

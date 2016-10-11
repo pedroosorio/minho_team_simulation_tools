@@ -1,0 +1,22 @@
+{
+  "self_agent": 0,
+  "n_agents": 6,
+  "n_local_recs": 200,
+  "local_mem_size": 200,
+  "shared_mem_size": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "n_shared_recs": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ]
+}

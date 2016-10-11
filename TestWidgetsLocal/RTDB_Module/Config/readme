@@ -1,0 +1,24 @@
+var 0 - Error
+var 1 - SelfRobotPositionX (-128 to 127) | Divide by 10
+var 2 - SelfRobotPositionY (-128 to 127) | Divide by 10
+var 3 - SelfRobotAngleLSB (-128 to 127)
+var 4 - SelfRobotAngleMSB (0 to 105)
+var 5 - SelfBallX (-128 to 127) | Divide by 10
+var 6 - SelfBallY (-128 to 127) | Divide by 10
+var 7 - SelfBallVisual (0 or 1)
+var 8 - SelfBallPossession (0 or 1)
+var 9 - SelfBattery (-128 to 128)
+var 10 - RefBoxComand
+var 11 - MainBallPositionX (-128 to 127) | Divide by 10
+var 12 - MainBallPositionY (-128 to 127) | Divide by 10
+var 13 - GameDirection
+var 61 - Robo1State
+var 62 - Robo2State
+var 63 - Robo3State
+var 64 - Robo4State
+var 65 - Robo5State
+var 91 - RobotPaper1
+var 92 - RobotPaper2
+var 93 - RobotPaper3
+var 94 - RobotPaper4
+var 95 - RobotPaper5
