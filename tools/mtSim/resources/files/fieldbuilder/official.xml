@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Field name="Official MSL Field">
+    <property name="L">0.125</property>
+    <property name="A">18.0</property>
+    <property name="B">12.0</property>
+    <property name="C">6.5</property>
+    <property name="D">3.5</property>
+    <property name="E">2.25</property>
+    <property name="F">0.75</property>
+    <property name="G">0.75</property>
+    <property name="H">4.0</property>
+    <property name="I">3.0</property>
+    <property name="J">0.1</property>
+    <property name="K">0.15</property>
+</Field>
+
+<!--
+A -> Length
+B -> Width
+C -> Large Area Width
+D -> Small Area Width
+E -> Large Area Length
+F -> Small Area Length
+G -> Corner Radius
+H -> Center Diameter
+I -> Penalty Spot Distance
+J -> Penalty Sport Diameter
+K -> Center Sport Diameter
+L -> LINE WIDTH
+-->

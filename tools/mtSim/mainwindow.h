@@ -9,6 +9,7 @@
 #include "renderingcamera.h"
 #include "worldmanager.h"
 #include "teleopprocessmanager.h"
+#include "fieldbuilderdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,7 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(bool run, QWidget *parent = 0);
     ~MainWindow();
     void start();
 private slots:
@@ -106,6 +107,8 @@ private slots:
 
     void on_take_rob_6_clicked();
 
+    void launch_field_builder();
+
 private:
     Ui::MainWindow *ui;
     RenderingCamera *_gfx_sim_;
@@ -117,6 +120,8 @@ private:
     TeleopProcessManager *minho_manager;
     bool modCtrl_, modShift_;
     QProcess ros_runner, gazebo_runner;
+    bool running;
+    FieldBuilderDialog *field_builder;
 
 };
 

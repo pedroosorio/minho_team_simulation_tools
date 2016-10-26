@@ -9,5 +9,9 @@
         <file>resources/configs/camera_conf.xml</file>
         <file>resources/configs/rosservice_conf.xml</file>
         <file>resources/configs/teleop_conf.xml</file>
+        <file>resources/images/field_dims.png</file>
+        <file>resources/images/app.png</file>
+        <file>resources/images/settings.png</file>
+        <file>resources/files/fieldbuilder/official.xml</file>
     </qresource>
 </RCC>

@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2015-2016 Open Source Robotics Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
-*/
-
 #include "minho_world.hh"
 
 using namespace gazebo;
@@ -22,7 +5,7 @@ Minho_World *me;
 // Register this plugin with the simulator
 GZ_REGISTER_WORLD_PLUGIN(Minho_World);
 
-/////////////////////////////////////////////////
+/// \brief Constructor
 Minho_World::Minho_World()
 {
     models_.clear();
@@ -30,11 +13,15 @@ Minho_World::Minho_World()
     me = this;
 }
 
+/// \brief deletes allocated memory
 Minho_World::~Minho_World()
 {
     for(unsigned int i=0;i<model_config_.size();i++) free(model_config_[i]);
 }
-/////////////////////////////////////////////////
+
+/// \brief Plugin Load function
+/// \param _parent - Model pointer to the model defining this plugin
+/// \param _sdf - pointer to the SDF of the model
 void Minho_World::Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf)
 {
     ROS_INFO("Starting world plugin ...");
@@ -48,7 +35,9 @@ void Minho_World::Load(physics::WorldPtr _parent, sdf::ElementPtr _sdf)
     cmd_sub_ = node_->Subscribe("/gazebo/default/factorybridge", &Minho_World::parseCommand);
 }
 
-
+/// \brief initializes the parameters in the plugin's configuration,
+/// such as available models
+/// \param _sdf - configurations for the plugin in sdf file
 void Minho_World::initPluginConfiguration(sdf::ElementPtr _sdf)
 {    
     // count number of models
@@ -81,6 +70,10 @@ void Minho_World::initPluginConfiguration(sdf::ElementPtr _sdf)
     }
 }
 
+/// \brief spawns a model into a world, given its id, in relation with 
+/// model_config_ models, defined in plugin's sdf.
+/// \param id - id of the type of model to be spawned (matchin) plugin configuration
+/// \param default_name - name of the new model
 void Minho_World::spawnModel(unsigned int id, std::string default_name)
 {
     bool pauseState = world_->IsPaused();
@@ -129,6 +122,8 @@ void Minho_World::spawnModel(unsigned int id, std::string default_name)
     world_->SetPaused(pauseState);
 }
 
+/// \brief deletes a model with a given name.
+/// \param name - name of the model to be deleted
 void Minho_World::deleteModel(std::string name)
 {
     bool model_deleted = false;
@@ -151,6 +146,9 @@ void Minho_World::deleteModel(std::string name)
     ROS_INFO("%s",models_list.str().c_str());
 }
 
+/// \brief receives messages in string form to add or remove a model.
+/// \param _msg - data received in callback, containing info about
+/// spawning or removing a model
 void Minho_World::parseCommand(ConstGzStringPtr &_msg)
 {
     std::string command = _msg->data();

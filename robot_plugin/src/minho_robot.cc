@@ -438,7 +438,7 @@ void Minho_Robot::publishRobotInfo()
     // Imu
     while(msg.robot_pose.z>(2.0*M_PI)) msg.robot_pose.z -= (2.0*M_PI);
     while(msg.robot_pose.z<0) msg.robot_pose.z += (2.0*M_PI);
-    msg.imu_value = msg.robot_pose.z*RAD_TO_DEG;
+    msg.robot_pose.z = msg.robot_pose.z*(180.0/M_PI);
     // Obstacles
     msg.obstacles = detectObstacles();
     

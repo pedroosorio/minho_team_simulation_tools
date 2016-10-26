@@ -17,15 +17,18 @@ SOURCES += main.cpp\
     renderingcamera.cpp \
     renderview.cpp \
     worldmanager.cpp \
-    teleopprocessmanager.cpp
+    teleopprocessmanager.cpp \
+    fieldbuilderdialog.cpp
 
 HEADERS  += mainwindow.h \
     renderingcamera.h \
     renderview.h \
     worldmanager.h \
-    teleopprocessmanager.h
+    teleopprocessmanager.h \
+    fieldbuilderdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    fieldbuilderdialog.ui
 
 # Includes for Ignition and Gazebo
 INCLUDEPATH += "/usr/local/include/ignition"

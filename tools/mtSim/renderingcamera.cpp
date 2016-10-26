@@ -286,8 +286,8 @@ CameraPtr RenderingCamera::CreateCamera(const std::string &_engine)
     // Parse info from camera_conf.xml
     camera->SetLocalPosition(view_.g_cameraXPosition, view_.g_cameraYPosition, view_.g_cameraZPosition);
     camera->SetLocalRotation(0.0, view_.g_cameraPitchRotation, view_.g_cameraYawRotation);
-    camera->SetImageWidth(280);
-    camera->SetImageHeight(280);
+    camera->SetImageWidth(600);
+    camera->SetImageHeight(600);
     camera->SetAntiAliasing(5);
     camera->SetAspectRatio(1.0);
     camera->SetHFOV((float)(M_PI/2.0));
