@@ -92,6 +92,12 @@ namespace gazebo
     /// in order to retrieve data about comands for robot motion.
     void teleopCallback(const teleop::ConstPtr& msg);
     
+    /// \brief function to actuate kicker, in order to kick the ball. Only kicks if
+    /// the robot detects that has the ball inside
+    /// \param req - request data received in requestKick service
+    /// \param res - response data, flaggin if the kick was taken or not
+    bool kickServiceCallback(requestKick::Request &req,requestKick::Response &res);
+    
     /// \brief thread to queue incoming data to callback queue, that subsequently calls 
     /// the respective callback, passing the matching data to it.
     void message_queue_thread();
@@ -238,6 +244,9 @@ namespace gazebo
     /// \brief pointer to world's set pose mutex. This pointer will make changes to the
     /// models become more thread safe.
     boost::mutex *world_mutex_;
+    
+    /// \brief kick service server to handle kick server calls
+    ros::ServiceServer kick_service; // Service to relay the configuration
    
   };
 }

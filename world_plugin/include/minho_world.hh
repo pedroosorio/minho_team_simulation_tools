@@ -69,7 +69,7 @@ namespace gazebo
     private:
     // VARIABLES
     /// \brief Transport node used to communicate with the transport system
-    transport::NodePtr node_
+    transport::NodePtr node_;
     /// \brief pointer to the world object of the simulation
     physics::WorldPtr world_;   
     /// \brief vector to hold the current models present in the world
@@ -77,10 +77,10 @@ namespace gazebo
     ///  \brief vector of structs to hold model configuration to be able
     /// to configure and easily change the models that are available for 
     /// the world.
-    std::vector<AvailableModelPtr> model_config_
+    std::vector<AvailableModelPtr> model_config_;
     /// \brief pointer to publish over factory topic, to add models to 
     /// the simulation
-    gazebo::transport::PublisherPtr factory_pub_
+    gazebo::transport::PublisherPtr factory_pub_;
     /// \brief pointer to subscriver over gz_string topic, to receive
     /// add or delete comands for models in the simulation.
     gazebo::transport::SubscriberPtr cmd_sub_;

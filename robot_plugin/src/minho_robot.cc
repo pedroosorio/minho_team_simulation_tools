@@ -341,14 +341,6 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
          applyVelocities(math::Vector3(msg->linear_velocity, msg->movement_direction, msg->angular_velocity));
          //Apply dribbling
          dribblers_on_ = msg->dribbler_on;
-         //Apply ball kicking
-         if(msg->kick_strength>0){
-             kick_requested_ = true;
-             kick_force_ = msg->kick_strength;
-             kick_dir_ = msg->kick_direction;
-             kick_is_pass_ = msg->kick_is_pass;
-             dribblers_on_ = false;
-         }
      }
     } else { // Autonomous
         if(!msg->is_teleop) {
@@ -359,14 +351,6 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
             applyVelocities(math::Vector3(msg->linear_velocity, msg->movement_direction, msg->angular_velocity));
             //Apply dribbling
             dribblers_on_ = msg->dribbler_on;
-            //Apply ball kicking
-            if(msg->kick_strength>0){
-                kick_requested_ = true;
-                kick_force_ = msg->kick_strength;
-                kick_dir_ = msg->kick_direction;
-                kick_is_pass_ = msg->kick_is_pass;
-                dribblers_on_ = false;
-            }
         }
     }
     
@@ -375,6 +359,23 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
 
 }
 
+/// \brief function to actuate kicker, in order to kick the ball. Only kicks if
+/// the robot detects that has the ball inside
+/// \param req - request data received in requestKick service
+/// \param res - response data, flaggin if the kick was taken or not
+bool Minho_Robot::kickServiceCallback(requestKick::Request &req,requestKick::Response &res)
+{
+   //Apply ball kicking
+   if(req.kick_strength>0){
+       kick_requested_ = true;
+       kick_force_ = req.kick_strength;
+       kick_dir_ = req.kick_direction;
+       kick_is_pass_ = req.kick_is_pass;
+       dribblers_on_ = false;
+   }
+            
+   res.kicked = has_game_ball_;
+}
 /// \brief callback to receive ROS messages published over the matching ros topic,
 /// in order to retrieve data about comands for robot motion.
 void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
