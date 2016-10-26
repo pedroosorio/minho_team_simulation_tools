@@ -32,7 +32,7 @@ using namespace gazebo;
 // Register this plugin with the simulator
 GZ_REGISTER_MODEL_PLUGIN(Minho_Robot);
 
-/////////////////////////////////////////////////
+/// \brief Constructor. Initialized deafult variables for various variables
 Minho_Robot::Minho_Robot()
 {
     initial_pose_ = math::Pose(0.0,-6.4,0.0,0.0,0.0,0.0);
@@ -54,6 +54,7 @@ Minho_Robot::Minho_Robot()
     MAX_BACKWARDS_VEL = GRIP_DECAY = MAX_ROTATION_VEL = 30.0;
 }
 
+/// \brief Destructor
 Minho_Robot::~Minho_Robot()
 {
     event::Events::DisconnectWorldUpdateBegin(_update_connection_);
@@ -65,7 +66,12 @@ Minho_Robot::~Minho_Robot()
     _node_ros_->shutdown();
     delete _node_ros_;
 }
-/////////////////////////////////////////////////
+
+/// \brief Plugin Load function. Initializes all ros topics for the robot model,
+/// also starting message queue thread. Connects gazebo events like world update,
+/// time reset and world reset
+/// \param _parent - Model pointer to the model defining this plugin
+/// \param _sdf - pointer to the SDF of the model
 void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
     // Rename model to specification
@@ -152,6 +158,10 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     _model_->SetWorldPose(initial_pose_);
 }
 
+/// \brief Applies the desired velocities to the robot, given
+/// the linear velocity, direction of movement and angular velocity
+/// \param command - has 3 components: (1) is linear velocity [0~100]
+/// (2) is direction of movement [0~360] and (3) is angular velocity [-100~100]
 void Minho_Robot::applyVelocities(math::Vector3 command)
 {
     // Apply angular velocity
@@ -169,12 +179,17 @@ void Minho_Robot::applyVelocities(math::Vector3 command)
     _model_->SetAngularVel(angular_velocity_);
 }
 
+/// \brief maps a velocity of the maximum velocity given a percentage.
+/// \param percentage - percentage of the maximum velocity to be applied
+/// \param limit - max velocity to be applied
+/// \return mapped value/velocity given a limit and a percentage
 double Minho_Robot::mapVelocity(double percentage, double limit)
 {
     return (percentage*limit)/100.0;
 }
 
-
+/// \brief gets a list of models in the world and renames itself, accordingly to the
+ /// existing robots already spawned.
 void Minho_Robot::autoRenameRobot()
 {
     team_id_ = 1;
@@ -276,7 +291,8 @@ void Minho_Robot::autoRenameRobot()
     _model_->Update();
 }
 
-
+/// \brief called by event signal every server simulation iteration. Used to reset 
+/// parameters like velocities and others
 void Minho_Robot::onUpdate()
 {
     static int kick_timer = 0;
@@ -303,6 +319,14 @@ void Minho_Robot::onUpdate()
     control_info_mutex_.unlock();
 }
 
+/// \brief called by event signal when a model or server reset happens
+void Minho_Robot::onReset()
+{
+   _model_->SetWorldPose(initial_pose_);  
+}
+
+/// \brief callback to receive ROS messages published over the matching ros topic,
+/// in order to retrieve data about comands for robot motion.
 void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
 {
     // lock resources
@@ -351,6 +375,8 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
 
 }
 
+/// \brief callback to receive ROS messages published over the matching ros topic,
+/// in order to retrieve data about comands for robot motion.
 void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
 {
     // lock resources
@@ -368,7 +394,8 @@ void Minho_Robot::teleopCallback(const teleop::ConstPtr& msg)
     tele_op_mutex_.unlock();
 }
 
-
+/// \brief thread to queue incoming data to callback queue, that subsequently calls 
+/// the respective callback, passing the matching data to it.
 void Minho_Robot::message_queue_thread()
 {
   static const double timeout = 0.01;
@@ -381,6 +408,7 @@ void Minho_Robot::message_queue_thread()
   }
 }
 
+/// \brief searches for game ball inside the world and stores a pointer to the model
 void Minho_Robot::getGameBallModel()
 {
     physics::WorldPtr world = _model_->GetWorld(); 
@@ -393,6 +421,8 @@ void Minho_Robot::getGameBallModel()
     }
 }
 
+/// \brief runs ball detection "sensor", using ball and robot pose's, computing the
+/// distance between them, comparing with a threshold.
 void Minho_Robot::detectBallPossession()
 {
     has_game_ball_ = false;
@@ -411,6 +441,8 @@ void Minho_Robot::detectBallPossession()
     }
 }
 
+/// \brief creates a ROS message, updates all the information and sends it through the
+/// publisher
 void Minho_Robot::publishRobotInfo()
 {
     minho_team_ros::robotInfo msg;
@@ -445,6 +477,7 @@ void Minho_Robot::publishRobotInfo()
     if(robot_info_pub_) robot_info_pub_.publish(msg);
 }
 
+/// \brief dribbles the ball, given the velocity vector of the robot
 void Minho_Robot::dribbleGameBall()
 {
     double grip_force = 1.0;
@@ -489,6 +522,11 @@ void Minho_Robot::dribbleGameBall()
     // otherwise let the ball suffer forces 
 }
 
+/// \brief kicks the ball, through the floor (passing) or the air (shoothing)
+/// allowing a slight variation in the direction of kicking
+/// \param pass - define wether the kick is a pass or not
+/// \param strength - define the strength of the kick
+/// \param direction - define the direction of the kick
 void Minho_Robot::kickGameBall(bool pass, int strength, int direction)
 {
     math::Vector3 kicking_vector;
@@ -514,6 +552,9 @@ void Minho_Robot::kickGameBall(bool pass, int strength, int direction)
     kick_requested_ = false;        
 }
 
+/// \brief reads and parses the elements passed to the plugin inside the model's sdf
+/// and initializes the matching variables
+/// \param _sdf - pointer to sdf element containing
 void Minho_Robot::initializePluginParameters(sdf::ElementPtr _sdf)
 {
     if(_sdf->HasElement("max_linear_velocity")){
@@ -553,6 +594,13 @@ void Minho_Robot::initializePluginParameters(sdf::ElementPtr _sdf)
     } else ROS_WARN("No vision range radius parameter defined in plugin's SDF");
 }
 
+/// \brief generates random noise to add gaussian noise to a variable read from the 
+/// world like ball position and obstacles position
+/// \param mean - mean of the error to be generated
+/// \param stdev - standard deviation of the error to 
+/// \param min - minimum value of the output value
+/// \param max - maximum value of the output value
+/// \return generated noise value
 double Minho_Robot::generateNoise(double mean, double stdev, double min, double max)
 {
     double noise = 0;
@@ -565,6 +613,9 @@ double Minho_Robot::generateNoise(double mean, double stdev, double min, double 
     return noise;
 }
 
+/// \brief detects obstacles in the view range, whether they being friendly or foe,
+/// at this point, in reality, the robot doesn't distinguish between friends or foes
+/// return vector of positions containing the position of the detected obstalces
 std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
 {
     std::vector<minho_team_ros::position>obstacles;
@@ -595,9 +646,4 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
     }
     
     return obstacles;       
-}
-
-void Minho_Robot::onReset()
-{
-   _model_->SetWorldPose(initial_pose_);  
 }

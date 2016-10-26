@@ -47,64 +47,64 @@ namespace gazebo
   {
     public: 
     
-    /// \brief Constructor
+    /// \brief Constructor. Initialized deafult variables for various variables
     Minho_Robot();
 
     /// \brief Destructor
     virtual ~Minho_Robot();
-    /// \brief Plugin Load function
-    /// \param[in] _parent Model pointer to the model defining this plugin
-    /// \param[in] _sdf pointer to the SDF of the model
+    
+    /// \brief Plugin Load function. Initializes all ros topics for the robot model,
+    /// also starting message queue thread. Connects gazebo events like world update,
+    /// time reset and world reset
+    /// \param _parent - Model pointer to the model defining this plugin
+    /// \param _sdf - pointer to the SDF of the model
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
     /// \brief Applies the desired velocities to the robot, given
     /// the linear velocity, direction of movement and angular velocity
-    /// \param[in] command has 3 components: (1) is linear velocity [0~100]
-    /// (2) is direction of movement [0~2*pi] and (3) is angular velocity [-100~100]
+    /// \param command - has 3 components: (1) is linear velocity [0~100]
+    /// (2) is direction of movement [0~360] and (3) is angular velocity [-100~100]
     void applyVelocities(math::Vector3 command);
     
     private:
-    
     /// \brief maps a velocity of the maximum velocity given a percentage.
-    /// \param[in] percentage percentage of the maximum velocity to be applied
-    /// \param[in] limit max velocity to be applied
+    /// \param percentage - percentage of the maximum velocity to be applied
+    /// \param limit - max velocity to be applied
+    /// \return mapped value/velocity given a limit and a percentage
     double mapVelocity(double percentage, double limit);
     
     /// \brief gets a list of models in the world and renames itself, accordingly to the
     /// existing robots already spawned.
     void autoRenameRobot();
     
-    /// \brief called by event signal every server simulation iteration. Used to reset parameters
-    /// like velocities and others.
+    /// \brief called by event signal every server simulation iteration. Used to reset 
+    /// parameters like velocities and others
     void onUpdate();
     
-    /// \brief called by event signal when a model or server reset happens.
+    /// \brief called by event signal when a model or server reset happens
     void onReset();
     
-    /// \brief callback to receive ROS messages published over the matching ros topic, in order
-    /// to retrieve data about comands for robot motion.
+    /// \brief callback to receive ROS messages published over the matching ros topic,
+    /// in order to retrieve data about comands for robot motion.
     void controlInfoCallback(const controlInfo::ConstPtr& msg);
     
-    /// \brief callback to receive ROS messages published over the matching ros topic, in order
-    /// to retrieve data about comands for robot motion.
+    /// \brief callback to receive ROS messages published over the matching ros topic,
+    /// in order to retrieve data about comands for robot motion.
     void teleopCallback(const teleop::ConstPtr& msg);
     
-    /// \brief callback to receive ROS messages published over the matching ros topic, in order
-    /// to retrieve data about comands for robot motion.
-    void teleopCallback(const teleop::ConstPtr& msg);
-    
-    /// \brief thread to queue incoming data to callback queue, that subsequently calls the respective
-    /// callback, passing the matching data to it.
+    /// \brief thread to queue incoming data to callback queue, that subsequently calls 
+    /// the respective callback, passing the matching data to it.
     void message_queue_thread();
     
     /// \brief searches for game ball inside the world and stores a pointer to the model
     void getGameBallModel();
     
-    /// \brief runs ball detection "sensor", using ball and robot pose's, computing the distance between
-    /// them, comparing with a threshold.
+    /// \brief runs ball detection "sensor", using ball and robot pose's, computing the
+    /// distance between them, comparing with a threshold.
     void detectBallPossession();
     
-    /// \brief creates a ROS message, updates all the information and sends it through the publisher
+    /// \brief creates a ROS message, updates all the information and sends it through the
+    /// publisher
     void publishRobotInfo();
     
     /// \brief dribbles the ball, given the velocity vector of the robot
@@ -112,18 +112,28 @@ namespace gazebo
     
     /// \brief kicks the ball, through the floor (passing) or the air (shoothing)
     /// allowing a slight variation in the direction of kicking
+    /// \param pass - define wether the kick is a pass or not
+    /// \param strength - define the strength of the kick
+    /// \param direction - define the direction of the kick
     void kickGameBall(bool pass, int strength, int direction);
     
     /// \brief reads and parses the elements passed to the plugin inside the model's sdf
     /// and initializes the matching variables
+    /// \param _sdf - pointer to sdf element containing
     void initializePluginParameters(sdf::ElementPtr _sdf);
     
-    /// \brief generates random noise to add gaussian noise to a variable read from the world
-    /// like ball position and obstacles position
+    /// \brief generates random noise to add gaussian noise to a variable read from the 
+    /// world like ball position and obstacles position
+    /// \param mean - mean of the error to be generated
+    /// \param stdev - standard deviation of the error to 
+    /// \param min - minimum value of the output value
+    /// \param max - maximum value of the output value
+    /// \return generated noise value
     double generateNoise(double mean, double stdev, double min, double max);
     
     /// \brief detects obstacles in the view range, whether they being friendly or foe,
     /// at this point, in reality, the robot doesn't distinguish between friends or foes
+    /// return vector of positions containing the position of the detected obstalces
     std::vector<minho_team_ros::position>detectObstacles();
     // VARIABLES
         
