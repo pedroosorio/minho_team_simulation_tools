@@ -126,7 +126,14 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 
         robot_info_pub_ = _node_ros_->advertise<minho_team_ros::robotInfo>(robotinfo_topic.str(),100);
         if(!robot_info_pub_) ROS_ERROR("Failed to init robotInfo publiser for '%s'.", _model_->GetName().c_str());
-
+        
+        std::stringstream kick_service_topic;
+        kick_service_topic << "minho_gazebo_robot" << std::to_string(team_id_) << "/requestKick";
+        /*ros::AdvertiseServiceOptions kick_srv = ros::AdvertiseServiceOptions::create<minho_team_ros::requestKick>(
+        kick_service_topic.str(), 100, boost::bind(&Minho_Robot::kickServiceCallback,this,_1,_2), 
+        ros::VoidPtr(), &this->message_queue_);*/
+        kick_service = _node_ros_->advertiseService(kick_service_topic.str(),&Minho_Robot::kickServiceCallback,this);
+        
         // Custom Callback Queue Thread. Use threads to process message and service callback queue
         message_callback_queue_thread_ = boost::thread(boost::bind(&Minho_Robot::message_queue_thread,this));
         ROS_WARN("Plugin ROS started on '%s'.", _model_->GetName().c_str());
@@ -356,7 +363,6 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
     
     // unlock resources
     control_info_mutex_.unlock();
-
 }
 
 /// \brief function to actuate kicker, in order to kick the ball. Only kicks if
@@ -373,8 +379,10 @@ bool Minho_Robot::kickServiceCallback(requestKick::Request &req,requestKick::Res
        kick_is_pass_ = req.kick_is_pass;
        dribblers_on_ = false;
    }
-            
+   
+   ROS_INFO("Kick service called");
    res.kicked = has_game_ball_;
+   return true;
 }
 /// \brief callback to receive ROS messages published over the matching ros topic,
 /// in order to retrieve data about comands for robot motion.

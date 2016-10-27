@@ -33,30 +33,7 @@
       <uri>model://minhoteam_msl_robot</uri>
       <name>minho_robot_2</name>
     </include>
-    <include>
-      <uri>model://minhoteam_msl_robot</uri>
-      <name>minho_robot_3</name>
-    </include>
-    <include>
-      <uri>model://minhoteam_msl_robot</uri>
-      <name>minho_robot_4</name>
-    </include>
-    <include>
-      <uri>model://minhoteam_msl_robot</uri>
-      <name>minho_robot_5</name>
-    </include>
-    <include>
-      <uri>model://other_msl_robot</uri>
-      <name>other_robot_1</name>
-    </include>
-    <include>
-      <uri>model://other_msl_robot</uri>
-      <name>other_robot_2</name>
-    </include>
-    <include>
-      <uri>model://other_msl_robot</uri>
-      <name>other_robot_3</name>
-    </include>
+
     
 
 

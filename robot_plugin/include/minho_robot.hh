@@ -19,6 +19,7 @@
 #include <boost/thread/mutex.hpp>
 #include <ros/callback_queue.h> 
 #include <ros/subscribe_options.h>
+#include <ros/advertise_service_options.h>
 #include <sdf/Param.hh>
 #include <boost/thread/thread_time.hpp>
 #include <boost/thread/locks.hpp>
