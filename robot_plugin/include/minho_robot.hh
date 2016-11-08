@@ -143,6 +143,9 @@ namespace gazebo
     /// at this point, in reality, the robot doesn't distinguish between friends or foes
     /// return vector of positions containing the position of the detected obstalces
     std::vector<minho_team_ros::position>detectObstacles();
+    
+    /// \brief computes both ball and robot velocities to send in robotInfo
+    void computeVelocities();
     // VARIABLES
         
     /// \brief Pointer to the model that defines this plugin
@@ -249,6 +252,9 @@ namespace gazebo
     
     /// \brief kick service server to handle kick server calls
     ros::ServiceServer kick_service; // Service to relay the configuration
+    
+    /// \brief robotInfo state variables 
+    robotInfo current_state, last_state, last_vel_state;
    
   };
 }

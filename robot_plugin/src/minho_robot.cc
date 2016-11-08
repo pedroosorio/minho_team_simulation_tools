@@ -320,6 +320,7 @@ void Minho_Robot::onUpdate()
         
     // Publish robotInfo over ROS
     publishRobotInfo();
+    last_state = current_state;
     // unlock resources
     control_info_mutex_.unlock();
 }
@@ -457,12 +458,11 @@ void Minho_Robot::detectBallPossession()
 /// \brief creates a ROS message, updates all the information and sends it through the
 /// publisher
 void Minho_Robot::publishRobotInfo()
-{
-    minho_team_ros::robotInfo msg;
+{  
     // Robot pose
-    msg.robot_pose.x = model_pose_.pos.x;
-    msg.robot_pose.y = model_pose_.pos.y;
-    msg.robot_pose.z = -model_pose_.rot.GetAsEuler().z+M_PI;
+    current_state.robot_pose.x = model_pose_.pos.x;
+    current_state.robot_pose.y = model_pose_.pos.y;
+    current_state.robot_pose.z = -model_pose_.rot.GetAsEuler().z+M_PI;
     // Orientation transposed to values used in our referential
     // Ball position
     if(game_ball_in_world_ && distance_to_ball_<=VISION_RANGE_RADIUS) { 
@@ -474,20 +474,23 @@ void Minho_Robot::publishRobotInfo()
         else if(ratio <= 0.8) {min = 0.05; max = 0.2;}
         else if(ratio <= 1.0) {min = 0.2; max = 0.3;}
         //
-        msg.ball_position.x = ball_pose_.pos.x+generateNoise(0.0,0.25,min,max);
-        msg.ball_position.y = ball_pose_.pos.y+generateNoise(0.0,0.25,min,max);
-        msg.sees_ball = true;
-    }                
+        current_state.ball_position.x = ball_pose_.pos.x+generateNoise(0.0,0.25,min,max);
+        current_state.ball_position.y = ball_pose_.pos.y+generateNoise(0.0,0.25,min,max);
+        current_state.sees_ball = true;
+    } else current_state.sees_ball = false;             
     // Ball sensor
-    if(has_game_ball_) msg.has_ball = 1; else msg.has_ball = 0;
+    if(has_game_ball_) current_state.has_ball = 1; else current_state.has_ball = 0;
     // Imu
-    while(msg.robot_pose.z>(2.0*M_PI)) msg.robot_pose.z -= (2.0*M_PI);
-    while(msg.robot_pose.z<0) msg.robot_pose.z += (2.0*M_PI);
-    msg.robot_pose.z = msg.robot_pose.z*(180.0/M_PI);
-    // Obstacles
-    msg.obstacles = detectObstacles();
+    while(current_state.robot_pose.z>(2.0*M_PI)) current_state.robot_pose.z -= (2.0*M_PI);
     
-    if(robot_info_pub_) robot_info_pub_.publish(msg);
+    while(current_state.robot_pose.z<0) current_state.robot_pose.z += (2.0*M_PI);
+    
+    current_state.robot_pose.z = current_state.robot_pose.z*(180.0/M_PI);
+    // Obstacles
+    current_state.obstacles = detectObstacles();
+    computeVelocities();
+    
+    if(robot_info_pub_) robot_info_pub_.publish(current_state);
 }
 
 /// \brief dribbles the ball, given the velocity vector of the robot
@@ -660,4 +663,34 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
     }
     
     return obstacles;       
+}
+
+void Minho_Robot::computeVelocities()
+{
+   int it_limit = 4;
+   static int iteration = it_limit;
+   float time_interval = 0.03125;
+   if(iteration<(it_limit-1)) iteration++;
+   else {
+      iteration = 0;
+      float lpf_weight = 0.9;
+      float lpf_minor = 1-lpf_weight;
+      // First, compute the robot velocities based on final localization estimate
+      // ########################################################################
+      // Time interval between estimates is requiredTiming = 33ms/30Hz
+      current_state.robot_velocity.x = lpf_weight*((current_state.robot_pose.x-last_vel_state.robot_pose.x)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.robot_velocity.x;  
+      current_state.robot_velocity.y = lpf_weight*((current_state.robot_pose.y-last_vel_state.robot_pose.y)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.robot_velocity.y; 
+      current_state.robot_velocity.w = lpf_weight*((current_state.robot_pose.z-last_vel_state.robot_pose.z)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.robot_velocity.z; 
+      // ########################################################################
+      if(current_state.robot_velocity.x>2.5) current_state.robot_velocity.x = 0;
+      if(current_state.robot_velocity.y>2.5) current_state.robot_velocity.y = 0;
+      
+      lpf_weight = 0.8;
+      if(distance_to_ball_>(2.0*VISION_RANGE_RADIUS)/3.0) lpf_weight = 0.5;
+      current_state.ball_velocity.x = lpf_weight*((current_state.ball_position.x-last_vel_state.ball_position.x)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.x;  
+      current_state.ball_velocity.y = lpf_weight*((current_state.ball_position.y-last_vel_state.ball_position.y)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.y; 
+      
+      
+      last_vel_state = current_state;
+   }
 }
