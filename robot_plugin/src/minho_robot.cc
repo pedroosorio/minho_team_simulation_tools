@@ -16,7 +16,7 @@
 */
 
 #include "minho_robot.hh"
-
+#define Y_AXIS_MULTIPLIER -1.0
 using namespace gazebo;
 
 
@@ -35,7 +35,7 @@ GZ_REGISTER_MODEL_PLUGIN(Minho_Robot);
 /// \brief Constructor. Initialized deafult variables for various variables
 Minho_Robot::Minho_Robot()
 {
-    initial_pose_ = math::Pose(0.0,-6.4,0.0,0.0,0.0,0.0);
+    initial_pose_ = math::Pose(0.0,-6.4*(-Y_AXIS_MULTIPLIER),0.0,0.0,0.0,0.0);
     linear_velocity_ = angular_velocity_ = math::Vector3(0.0,0.0,0.0);
     team_id_ = 0; //null
     is_ros_initialized_ = false;
@@ -129,9 +129,6 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
         
         std::stringstream kick_service_topic;
         kick_service_topic << "minho_gazebo_robot" << std::to_string(team_id_) << "/requestKick";
-        /*ros::AdvertiseServiceOptions kick_srv = ros::AdvertiseServiceOptions::create<minho_team_ros::requestKick>(
-        kick_service_topic.str(), 100, boost::bind(&Minho_Robot::kickServiceCallback,this,_1,_2), 
-        ros::VoidPtr(), &this->message_queue_);*/
         kick_service = _node_ros_->advertiseService(kick_service_topic.str(),&Minho_Robot::kickServiceCallback,this);
         
         // Custom Callback Queue Thread. Use threads to process message and service callback queue
@@ -307,6 +304,7 @@ void Minho_Robot::onUpdate()
     control_info_mutex_.lock();
     
     model_pose_ = _model_->GetWorldPose(); // get robot position
+    model_pose_.pos.y *= Y_AXIS_MULTIPLIER;
     getGameBallModel(); // finds and computes distance to game ball
 
     // Apply defined velocities to the robot
@@ -425,6 +423,7 @@ void Minho_Robot::getGameBallModel()
     if(!_ball_) { has_game_ball_ = false; game_ball_in_world_ = false;}
     else { 
         ball_pose_ = _ball_->GetWorldPose(); 
+        ball_pose_.pos.y *= Y_AXIS_MULTIPLIER;
         detectBallPossession(); 
         game_ball_in_world_ = true;
     }
@@ -439,13 +438,18 @@ void Minho_Robot::detectBallPossession()
    
     if(ball_pose_.pos.z>=-0.2 && ball_pose_.pos.z<= 0.22){ // If the ball is on game floor
         distance_to_ball_ = ball_position.Distance(ignition::math::Vector2<float>((float)model_pose_.pos.x,(float)model_pose_.pos.y));
-        double direction = (std::atan2(ball_pose_.pos.y-model_pose_.pos.y,ball_pose_.pos.x-model_pose_.pos.x)-model_pose_.rot.GetAsEuler().z
-                                     +(float)M_PI/2.0)*RAD_TO_DEG;
-        while(direction>360.0) direction -= 360.0;
-        while(direction<0) direction += 360.0;
         
-        // Has to be in reach of the imaginary dribbles
-        if((distance_to_ball_<= poss_threshold_distance_) && (direction>=150&&direction<=210)) has_game_ball_ = true;
+        double robot_orientation = -model_pose_.rot.GetAsEuler().z+M_PI;
+        while(robot_orientation>(2.0*M_PI)) robot_orientation -= (2.0*M_PI);
+        while(robot_orientation<0) robot_orientation += (2.0*M_PI);
+        robot_orientation *= (180.0/M_PI);
+        
+        double direction = std::atan2(ball_pose_.pos.y-model_pose_.pos.y,ball_pose_.pos.x-model_pose_.pos.x)*(180.0/M_PI)-robot_orientation;
+        while(direction<0) direction += 360.0;
+        while(direction>360.0) direction -= 360.0;
+        
+        // Has to be in reach of the imaginary grabbers
+        if((distance_to_ball_<= poss_threshold_distance_) && (direction>=60&&direction<=120)) has_game_ball_ = true;
         else has_game_ball_ = false;
     }
 }
@@ -468,7 +472,7 @@ void Minho_Robot::publishRobotInfo()
         if(ratio <= 0.3) {min = 0.0; max = 0.03;}
         else if(ratio <= 0.6) {min = 0.0; max = 0.05;}
         else if(ratio <= 0.8) {min = 0.05; max = 0.2;}
-        else if(ratio <= 1.0) {min = 0.2; max = 0.5;}
+        else if(ratio <= 1.0) {min = 0.2; max = 0.3;}
         //
         msg.ball_position.x = ball_pose_.pos.x+generateNoise(0.0,0.25,min,max);
         msg.ball_position.y = ball_pose_.pos.y+generateNoise(0.0,0.25,min,max);
@@ -516,7 +520,7 @@ void Minho_Robot::dribbleGameBall()
     grip_force -= (linear_grip_reducer+rotation_grip_reducer);
     
     // max grip 2/3 of ball inside robot, minimum grip 1/3 of ball inside robot
-    math::Vector3 robot_position = math::Vector3((float)model_pose_.pos.x,(float)model_pose_.pos.y,0.0);
+    math::Vector3 robot_position = math::Vector3((float)model_pose_.pos.x,(float)model_pose_.pos.y*Y_AXIS_MULTIPLIER,0.0);
     double robot_heading = model_pose_.rot.GetAsEuler().z+(float)M_PI/2.0;
     double distance_null = 0.21326;
     double distance = distance_null+((-0.14674*grip_force)+0.14674);
@@ -640,6 +644,7 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
         std::string mod = models_list[id]->GetName().substr(0,11);
         if((mod.compare("minho_robot")==0 || mod.compare("other_robot")==0) && models_list[id]->GetName().compare(_model_->GetName())!=0){
             math::Pose obstacle_pose = models_list[id]->GetWorldPose();
+            obstacle_pose.pos.y *= Y_AXIS_MULTIPLIER;
             math::Vector3 robot_position = math::Vector3((float)model_pose_.pos.x,(float)model_pose_.pos.y,0.0);
             double distance = robot_position.Distance(obstacle_pose.pos.x, obstacle_pose.pos.y, 0.0);
             ratio = distance/VISION_RANGE_RADIUS;
