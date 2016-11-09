@@ -424,6 +424,8 @@ void Minho_Robot::getGameBallModel()
     if(!_ball_) { has_game_ball_ = false; game_ball_in_world_ = false;}
     else { 
         ball_pose_ = _ball_->GetWorldPose(); 
+        // Compute center position
+        
         ball_pose_.pos.y *= Y_AXIS_MULTIPLIER;
         detectBallPossession(); 
         game_ball_in_world_ = true;
@@ -697,7 +699,8 @@ void Minho_Robot::computeVelocities()
       if(current_state.robot_velocity.y>2.5) current_state.robot_velocity.y = 0;
       
       lpf_weight = 0.8;
-      if(distance_to_ball_>(2.0*VISION_RANGE_RADIUS)/3.0) lpf_weight = 0.5;
+      if(distance_to_ball_>(2.0*VISION_RANGE_RADIUS)/3.0) lpf_weight = 0.4;
+      lpf_minor = 1-lpf_weight;
       current_state.ball_velocity.x = lpf_weight*((current_state.ball_position.x-last_vel_state.ball_position.x)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.x;  
       current_state.ball_velocity.y = lpf_weight*((current_state.ball_position.y-last_vel_state.ball_position.y)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.y; 
       
