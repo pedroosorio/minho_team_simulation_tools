@@ -472,10 +472,15 @@ void Minho_Robot::publishRobotInfo()
         if(ratio <= 0.3) {min = 0.0; max = 0.03;}
         else if(ratio <= 0.6) {min = 0.0; max = 0.05;}
         else if(ratio <= 0.8) {min = 0.05; max = 0.2;}
-        else if(ratio <= 1.0) {min = 0.2; max = 0.3;}
-        //
-        current_state.ball_position.x = ball_pose_.pos.x+generateNoise(0.0,0.25,min,max);
-        current_state.ball_position.y = ball_pose_.pos.y+generateNoise(0.0,0.25,min,max);
+        else if(ratio <= 1.0) {min = 0.2; max = 0.35;}
+       
+        double error = generateNoise(0.0,0.25,min,max);
+        double direction = std::atan2(ball_pose_.pos.y-model_pose_.pos.y
+        ,ball_pose_.pos.x-model_pose_.pos.x);
+               
+        current_state.ball_position.x = ball_pose_.pos.x+error*cos(direction);
+        current_state.ball_position.y = ball_pose_.pos.y+error*sin(direction);
+        
         current_state.sees_ball = true;
     } else current_state.sees_ball = false;             
     // Ball sensor
@@ -650,15 +655,21 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
             obstacle_pose.pos.y *= Y_AXIS_MULTIPLIER;
             math::Vector3 robot_position = math::Vector3((float)model_pose_.pos.x,(float)model_pose_.pos.y,0.0);
             double distance = robot_position.Distance(obstacle_pose.pos.x, obstacle_pose.pos.y, 0.0);
-            ratio = distance/VISION_RANGE_RADIUS;
-            if(ratio <= 0.3) {min = 0.0; max = 0.03;}
-            else if(ratio <= 0.6) {min = 0.0; max = 0.05;}
-            else if(ratio <= 0.8) {min = 0.05; max = 0.2;}
-            else if(ratio <= 1.0) {min = 0.2; max = 0.5;}
-            // Add gaussian noise
-            position.x = obstacle_pose.pos.x+generateNoise(0.0,0.25,min,max); 
-            position.y = obstacle_pose.pos.y+generateNoise(0.0,0.25,min,max);
-            if(distance <= VISION_RANGE_RADIUS) obstacles.push_back(position);
+            
+            if(distance <= VISION_RANGE_RADIUS){
+               ratio = distance/VISION_RANGE_RADIUS;
+               if(ratio <= 0.3) {min = 0.0; max = 0.03;}
+               else if(ratio <= 0.6) {min = 0.0; max = 0.05;}
+               else if(ratio <= 0.8) {min = 0.05; max = 0.2;}
+               else if(ratio <= 1.0) {min = 0.2; max = 0.3;}
+               // Add gaussian noise
+               double error = generateNoise(0.0,0.25,min,max);
+               double direction = std::atan2(obstacle_pose.pos.y-model_pose_.pos.y,obstacle_pose.pos.x-model_pose_.pos.x);
+               
+               position.x = obstacle_pose.pos.x+error*cos(direction);
+               position.y = obstacle_pose.pos.y+error*sin(direction);
+               obstacles.push_back(position);
+            }
         }
     }
     
