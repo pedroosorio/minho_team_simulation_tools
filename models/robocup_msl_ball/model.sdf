@@ -3,7 +3,7 @@
   <model name="RoboCup MSL Ball">
     <static>false</static>
     <link name="ball">
-       <pose>0 0 0.11 0 -0 0</pose>
+       <pose>0 0 0 0 0 0</pose>
         <inertial>
           <mass>0.41</mass>
           <inertia>
