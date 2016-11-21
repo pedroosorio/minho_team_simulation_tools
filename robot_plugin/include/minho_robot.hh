@@ -24,7 +24,7 @@
 #include <boost/thread/thread_time.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-
+#include <boost/process.hpp> 
 #define DEG_TO_RAD M_PI/180.0
 #define RAD_TO_DEG 180.0/M_PI
 
@@ -144,8 +144,22 @@ namespace gazebo
     /// return vector of positions containing the position of the detected obstalces
     std::vector<minho_team_ros::position>detectObstacles();
     
-    /// \brief computes both ball and robot velocities to send in robotInfo
+    /// \brief computes both ball and robot velocities to send in robotInfo using
+    /// a simple low pass filter approach to reduce noisy estimates
     void computeVelocities();
+    
+    /// \brief boots indicated ROS nodes to add functionalities to the model
+    /// This nodes have to be specified in plugin's SDF correctly, naming the
+    /// package, node names, flags and placed in boot order
+    /// \param _sdf - sdf struct containing plugin's data, containing Robot parameters
+    /// and ROS boot node info
+    void bootROSNodes(sdf::ElementPtr _sdf);
+    
+    /// \brief asserts flag value for ros node booting procedure. It can translate values
+    /// started with '$' with plugin run time variables
+    /// \param value - initial parameter value to be asserted
+    /// \return - string with the asserted parameter
+    std::string assertFlagValue(std::string value);
     // VARIABLES
         
     /// \brief Pointer to the model that defines this plugin

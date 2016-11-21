@@ -90,6 +90,7 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     initializePluginParameters(_sdf);
     autoRenameRobot();
     
+    ROS_WARN("#############################################################");
     ROS_WARN("Loading Minho_Robot Plugin for '%s' ...", _model_->GetName().c_str());
     
     if (!ros::isInitialized()){
@@ -99,9 +100,9 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     
     // Initialize ROS interface
     if(!is_ros_initialized_){
-        ROS_ERROR("Plugin ROS failed to start on '%s'. \n", _model_->GetName().c_str());
+        ROS_ERROR("Plugin ROS failed to start on '%s'.", _model_->GetName().c_str());
     } else {
-        ROS_INFO("Plugin ROS successfuly initialized. \n");
+        ROS_INFO("Plugin ROS successfuly initialized.");
         // Initialize ROS publishers and subscribers
         _node_ros_ = new ros::NodeHandle();
 
@@ -125,7 +126,6 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
         robotinfo_topic << "minho_gazebo_robot" << std::to_string(team_id_) << "/robotInfo";
 
         robot_info_pub_ = _node_ros_->advertise<minho_team_ros::robotInfo>(robotinfo_topic.str(),100);
-        if(!robot_info_pub_) ROS_ERROR("Failed to init robotInfo publiser for '%s'.", _model_->GetName().c_str());
         
         std::stringstream kick_service_topic;
         kick_service_topic << "minho_gazebo_robot" << std::to_string(team_id_) << "/requestKick";
@@ -145,14 +145,6 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     boost::bind(&Minho_Robot::onReset, this));
     getGameBallModel();
     
-    // Print models in world
-    std::vector<physics::ModelPtr> models_ = _model_->GetWorld()->GetModels();
-    std::stringstream models_list;
-    models_list << "Current Models in World:";
-    for(unsigned int m = 0;m<models_.size();m++) models_list << "\n\t\t\t\tModel " << m << " -> " << models_[m]->GetName();
-    models_list << "\n";
-    ROS_INFO("%s",models_list.str().c_str());
-      
     world->EnablePhysicsEngine(true);
     world->EnableAllModels();
     world->SetPaused(pauseState);
@@ -160,6 +152,9 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     //Place the robot in the initial position regarding its team_id_
     initial_pose_.pos.x = 0.8*(float)team_id_;
     _model_->SetWorldPose(initial_pose_);
+    
+    // Boots other ROS Nodes as coms, control, AI ...
+    bootROSNodes(_sdf);
 }
 
 /// \brief Applies the desired velocities to the robot, given
@@ -379,7 +374,6 @@ bool Minho_Robot::kickServiceCallback(requestKick::Request &req,requestKick::Res
        dribblers_on_ = false;
    }
    
-   ROS_INFO("Kick service called");
    res.kicked = has_game_ball_;
    return true;
 }
@@ -678,6 +672,8 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
     return obstacles;       
 }
 
+/// \brief computes both ball and robot velocities to send in robotInfo using
+/// a simple low pass filter approach to reduce noisy estimates
 void Minho_Robot::computeVelocities()
 {
    int it_limit = 4;
@@ -707,4 +703,80 @@ void Minho_Robot::computeVelocities()
       
       last_vel_state = current_state;
    }
+}
+
+/// \brief boots indicated ROS nodes to add functionalities to the model
+/// This nodes have to be specified in plugin's SDF correctly, naming the
+/// package, node names, flags and placed in boot order
+/// \param _sdf - sdf struct containing plugin's data, containing Robot parameters
+/// and ROS boot node info
+void Minho_Robot::bootROSNodes(sdf::ElementPtr _sdf)
+{
+   ROS_WARN("Booting complementary ROS Nodes ...");
+   std::string executable_name = "rosrun";
+   sdf::ElementPtr boot_list;
+   if(_sdf->HasElement("ros_boot")){
+     boot_list = _sdf->GetElement("ros_boot");
+   } else { ROS_WARN("No ROS Node Boot List found."); return; }
+   
+   sdf::ElementPtr node;
+   if(boot_list->HasElement("node")){
+      node = boot_list->GetFirstElement();
+      while(node){
+         std::string package_name = "";
+         std::string node_name = "";
+         std::vector<std::string> flags_str; 
+         // Parse information
+         if(node->HasElement("package")){
+            package_name = node->GetElement("package")->GetValue()->GetAsString();
+            if(node->HasElement("name")){
+               node_name = node->GetElement("name")->GetValue()->GetAsString();
+               flags_str.clear();
+               
+               sdf::ElementPtr flags;
+               if(node->HasElement("flags")){
+                  flags = node->GetElement("flags");
+                  sdf::ElementPtr flag;
+                  flag = flags->GetFirstElement();
+                  while(flag){
+                     flags_str.push_back(assertFlagValue(flag->GetValue()->GetAsString()));
+                     flag = flag->GetNextElement();
+                  }
+               } else ROS_WARN("No flags in Boot List for %s", node_name.c_str());
+               
+               //Add defined node to boot list
+               //ROS_Boot_List
+               std::vector<std::string> args;
+               std::string exe = boost::process::find_executable_in_path(executable_name); 
+               args.push_back(package_name); args.push_back(node_name);
+               ROS_INFO("Booting %s %s",package_name.c_str(), node_name.c_str());
+               ROS_INFO(" Flags:");
+               for(int i=0;i<flags_str.size();i++) {
+                  ROS_INFO("   %s",flags_str[i].c_str());
+                  args.push_back(flags_str[i]);
+               }
+             
+               boost::process::create_child(exe,args); 
+            } else ROS_ERROR("Error in boot node definition, missing name.");
+         } else ROS_ERROR("Error in boot node definition, missing package.");
+         node = node->GetNextElement();
+      }
+   } else { ROS_WARN("No ROS Nodes found in Boot List."); return; }
+
+   ROS_INFO("ROS Node Boot complete.");
+   ROS_WARN("#############################################################");
+}
+
+/// \brief asserts flag value for ros node booting procedure. It can translate values
+/// started with '$' with plugin run time variables
+/// \param value - initial parameter value to be asserted
+/// \return - string with the asserted parameter
+std::string Minho_Robot::assertFlagValue(std::string value)
+{
+   if((value.size()>=1) && (value[0]!='$')) return value;
+   
+   if(!strcmp(value.c_str(),"$ID")) { return std::to_string(team_id_); }
+   
+   ROS_ERROR("Error in flag assert.");
+   return "";
 }

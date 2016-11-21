@@ -184,6 +184,7 @@
     
     <!-- HARDWARE/WORLDMODEL PLUGIN -->
     <plugin filename="libminho_robot.so" name="minho_robot">
+               <!-- ROBOT PARAMETERS -->
         <max_linear_velocity>2.5</max_linear_velocity>
         <max_angular_velocity>15.0</max_angular_velocity>
         <max_ball_velocity>8.0</max_ball_velocity>
@@ -193,6 +194,20 @@
         <max_backwards_grip_vel>30</max_backwards_grip_vel>
         <max_rotation_grip_vel>20</max_rotation_grip_vel>
         <grip_decay>24</grip_decay>
+               <!-- ROS NODE BOOT -->
+        <ros_boot>
+            <!-- COMS_NODE -->
+            <node>
+               <package>minho_team_ros</package>
+               <name>coms_node</name>
+               <flags>
+                  <flag>-s</flag>
+                  <flag>$ID</flag>
+               </flags>
+            </node>
+            <!-- OTHER NODES -->
+
+        </ros_boot>
     </plugin>
     
   </model>
