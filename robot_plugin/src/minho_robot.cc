@@ -57,6 +57,7 @@ Minho_Robot::Minho_Robot()
 /// \brief Destructor
 Minho_Robot::~Minho_Robot()
 {
+    for(int i=0;i<childs.size();i++)childs[i].terminate();
     event::Events::DisconnectWorldUpdateBegin(_update_connection_);
     // Removes all callbacks from the queue. Does not wait for calls currently in progress to finish. 
     message_queue_.clear();
@@ -155,6 +156,8 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     
     // Boots other ROS Nodes as coms, control, AI ...
     bootROSNodes(_sdf);
+    
+    setupSensors();
 }
 
 /// \brief Applies the desired velocities to the robot, given
@@ -312,7 +315,7 @@ void Minho_Robot::onUpdate()
     else if(kick_timer>0) kick_timer--;
     if(dribblers_on_ && has_game_ball_ && (kick_timer<=0)) dribbleGameBall();
     if(kick_requested_ && has_game_ball_) kickGameBall(kick_is_pass_,kick_force_,kick_dir_);
-        
+    
     // Publish robotInfo over ROS
     publishRobotInfo();
     last_state = current_state;
@@ -489,6 +492,7 @@ void Minho_Robot::publishRobotInfo()
     current_state.robot_pose.z = current_state.robot_pose.z*(180.0/M_PI);
     // Obstacles
     current_state.obstacles = detectObstacles();
+    mockObstacleDetection();  
     computeVelocities();
     
     if(robot_info_pub_) robot_info_pub_.publish(current_state);
@@ -713,6 +717,7 @@ void Minho_Robot::computeVelocities()
 void Minho_Robot::bootROSNodes(sdf::ElementPtr _sdf)
 {
    ROS_WARN("Booting complementary ROS Nodes ...");
+   childs.clear();
    std::string executable_name = "rosrun";
    sdf::ElementPtr boot_list;
    if(_sdf->HasElement("ros_boot")){
@@ -756,7 +761,7 @@ void Minho_Robot::bootROSNodes(sdf::ElementPtr _sdf)
                   args.push_back(flags_str[i]);
                }
              
-               boost::process::create_child(exe,args); 
+               childs.push_back(boost::process::create_child(exe,args)); 
             } else ROS_ERROR("Error in boot node definition, missing name.");
          } else ROS_ERROR("Error in boot node definition, missing package.");
          node = node->GetNextElement();
@@ -780,3 +785,69 @@ std::string Minho_Robot::assertFlagValue(std::string value)
    ROS_ERROR("Error in flag assert.");
    return "";
 }
+
+    
+    
+/// \brief setus up model sensors, performing detection and type identification
+void Minho_Robot::setupSensors()
+{
+   // Check model sensors
+   sensors_.clear();
+   gazebo::sensors::SensorManager *manager = gazebo::sensors::SensorManager::Instance();
+   if(manager){
+   std::vector<gazebo::sensors::SensorPtr> sensors = manager->GetSensors();
+      for(int i=0;i<sensors.size();i++){
+         if(!_model_->GetName().compare(sensors[i]->ParentName().substr(0,sensors[i]->ParentName().find(":")))){
+            sensors_.push_back(sensors[i]);
+         }
+      }
+   }
+   
+   ROS_INFO("Found %lu sensors attached to %s",sensors_.size(),_model_->GetName().c_str());
+   
+   // Look for obstacle_detector sensor first
+   for(int i=0;i<sensors_.size();i++){
+      if(sensors_[i]->Name().compare("obstacle_detector")){
+         obstacle_detector = dynamic_cast<gazebo::sensors::RaySensor *>(sensors_[i].get());
+      }
+   }
+}    
+   
+/// \brief reads ray sensor to perform mock obstacle detection. It pushes the position
+/// of obstacles into current_state(robotInfo)
+void Minho_Robot::mockObstacleDetection()
+{
+   std::vector<double> ranges;
+   ranges.clear();
+   if(obstacle_detector) obstacle_detector->Ranges(ranges);
+   
+   position temp, robot_pos;
+   robot_pos.x = current_state.robot_pose.x;
+   robot_pos.y = current_state.robot_pose.y;
+   float robot_heading = current_state.robot_pose.z*(M_PI/180.0);
+   for(int i=0;i<ranges.size();i++){
+      if(ranges[i]>0.30 && ranges[i]<VISION_RANGE_RADIUS){
+         current_state.obstacles.push_back(mapPointToWorld(robot_pos,
+                                                           robot_heading,
+                                                           ranges[i],
+                                                           (float)i*(M_PI/180.0)+M_PI));   
+      }
+   }
+}
+  
+/// \brief mapps a detected point relative to the robot to the world position
+/// \param robot - position of the robot in the field, in meters
+/// \param robot_heading - heading of the robot in º
+/// \param dist - detected distance in meters
+/// \param theta - angle of the detected point in relation to world's 0º
+/// \return - position of the mapped point in meters
+position Minho_Robot::mapPointToWorld(position robot, float robot_heading, float dist, float theta)
+{
+   double pointRelX = dist*cos(theta);
+   double pointRelY = dist*sin(theta);
+   position mappedPoint;
+   mappedPoint.x = robot.x-cos(robot_heading)*pointRelX-sin(robot_heading)*pointRelY;
+   mappedPoint.y = robot.y-sin(robot_heading)*pointRelX+cos(robot_heading)*pointRelY;
+   return mappedPoint;
+}
+   

@@ -7,6 +7,7 @@
 #include <gazebo/msgs/msgs.hh>
 #include <gazebo/transport/transport.hh>
 #include <gazebo/common/Events.hh>
+#include <gazebo/sensors/sensors.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector2.hh>
@@ -41,6 +42,7 @@ using minho_team_ros::robotInfo; //Namespace for robot information msg - PUBLISH
 using minho_team_ros::controlInfo; //Namespace for control information msg - SUBSCRIBING
 using minho_team_ros::teleop; //Namespace for teleop information msg - SUBSCRIBING
 using minho_team_ros::requestKick; // Namespace for kicking service
+using minho_team_ros::position;
 
 namespace gazebo
 {
@@ -144,6 +146,14 @@ namespace gazebo
     /// return vector of positions containing the position of the detected obstalces
     std::vector<minho_team_ros::position>detectObstacles();
     
+    /// \brief mapps a detected point relative to the robot to the world position
+    /// \param robot - position of the robot in the field, in meters
+    /// \param robot_heading - heading of the robot in º
+    /// \param dist - detected distance in meters
+    /// \param theta - angle of the detected point in relation to world's 0º
+    /// \return - position of the mapped point in meters
+    position mapPointToWorld(position robot, float robot_heading, float dist, float theta);
+    
     /// \brief computes both ball and robot velocities to send in robotInfo using
     /// a simple low pass filter approach to reduce noisy estimates
     void computeVelocities();
@@ -160,6 +170,13 @@ namespace gazebo
     /// \param value - initial parameter value to be asserted
     /// \return - string with the asserted parameter
     std::string assertFlagValue(std::string value);
+    
+    /// \brief setus up model sensors, performing detection and type identification
+    void setupSensors();
+    
+    /// \brief reads ray sensor to perform mock obstacle detection. It pushes the position
+    /// of obstacles into current_state(robotInfo)
+    void mockObstacleDetection();
     // VARIABLES
         
     /// \brief Pointer to the model that defines this plugin
@@ -269,6 +286,15 @@ namespace gazebo
     
     /// \brief robotInfo state variables 
     robotInfo current_state, last_state, last_vel_state;
+    
+    /// \brief vector holding handles to child processes
+    std::vector<boost::process::child> childs;
+    
+    /// \brief vector holding handles to sensors attached to the model
+    std::vector<gazebo::sensors::SensorPtr> sensors_;
+    
+    /// \brief handler of obstacle_detector mock sensor
+    gazebo::sensors::RaySensor *obstacle_detector;
    
   };
 }
