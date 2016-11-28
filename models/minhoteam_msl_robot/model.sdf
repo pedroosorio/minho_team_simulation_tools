@@ -235,7 +235,7 @@
         <ray>
           <scan>
             <horizontal>
-              <samples>360</samples>
+              <samples>100</samples>
               <resolution>1</resolution>
               <min_angle>-3.14159</min_angle>
               <max_angle>3.14159</max_angle>
@@ -249,7 +249,7 @@
           <noise>
             <type>gaussian</type>
             <mean>0.0</mean>
-            <stddev>0.1</stddev>
+            <stddev>0.05</stddev>
           </noise>
         </ray>
 

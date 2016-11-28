@@ -10,6 +10,7 @@
 #include <gazebo/sensors/sensors.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Pose3.hh>
+#include <ignition/math/Angle.hh>
 #include <ignition/math/Vector2.hh>
 #include <stdio.h>
 #include <stdlib.h>

@@ -825,13 +825,17 @@ void Minho_Robot::mockObstacleDetection()
    robot_pos.x = current_state.robot_pose.x;
    robot_pos.y = current_state.robot_pose.y;
    float robot_heading = current_state.robot_pose.z*(M_PI/180.0);
+   float angle = -M_PI;
+   float step = obstacle_detector->AngleResolution();
+   
    for(int i=0;i<ranges.size();i++){
       if(ranges[i]>0.30 && ranges[i]<VISION_RANGE_RADIUS){
          current_state.obstacles.push_back(mapPointToWorld(robot_pos,
                                                            robot_heading,
                                                            ranges[i],
-                                                           (float)i*(M_PI/180.0)+M_PI));   
+                                                           angle));   
       }
+      angle += step;
    }
 }
   
