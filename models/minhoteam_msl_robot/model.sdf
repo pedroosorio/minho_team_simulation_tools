@@ -266,6 +266,8 @@
           <xyz>1 1 1</xyz>
         </axis>
     </joint> 
+    <!-- Fake LIDAR for obstacle detection -->
+    
     
   </model>
 </sdf>
