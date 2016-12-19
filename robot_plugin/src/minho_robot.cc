@@ -157,7 +157,7 @@ void Minho_Robot::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     // Boots other ROS Nodes as coms, control, AI ...
     bootROSNodes(_sdf);
     
-    setupSensors();
+    //setupSensors();
 }
 
 /// \brief Applies the desired velocities to the robot, given
@@ -492,7 +492,7 @@ void Minho_Robot::publishRobotInfo()
     current_state.robot_pose.z = current_state.robot_pose.z*(180.0/M_PI);
     // Obstacles
     current_state.obstacles = detectObstacles();
-    mockObstacleDetection();  
+    //mockObstacleDetection();  
     computeVelocities();
     
     if(robot_info_pub_) robot_info_pub_.publish(current_state);

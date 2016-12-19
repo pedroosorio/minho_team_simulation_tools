@@ -180,46 +180,9 @@
         <axis>
           <xyz>1 1 1</xyz>
         </axis>
-    </joint>    
-    
-    <!-- HARDWARE/WORLDMODEL PLUGIN -->
-    <plugin filename="libminho_robot.so" name="minho_robot">
-               <!-- ROBOT PARAMETERS -->
-        <max_linear_velocity>2.5</max_linear_velocity>
-        <max_angular_velocity>15.0</max_angular_velocity>
-        <max_ball_velocity>8.0</max_ball_velocity>
-        <ball_kick_angle>45.0</ball_kick_angle>
-        <ball_model_name>RoboCup MSL Ball</ball_model_name>
-        <vision_range_radius>6.0</vision_range_radius>
-        <max_backwards_grip_vel>30</max_backwards_grip_vel>
-        <max_rotation_grip_vel>20</max_rotation_grip_vel>
-        <grip_decay>24</grip_decay>
-               <!-- ROS NODE BOOT -->
-        <ros_boot>
-            <!-- COMS_NODE -->
-            <node>
-               <package>minho_team_ros</package>
-               <name>coms_node</name>
-               <flags>
-                  <flag>-s</flag>
-                  <flag>$ID</flag>
-               </flags>
-            </node>
-            <!--<node>
-               <package>minho_team_ros</package>
-               <name>control_node</name>
-               <flags>
-                  <flag>-s</flag>
-                  <flag>$ID</flag>
-               </flags>
-            </node>
-             OTHER NODES -->
-
-        </ros_boot>
-    </plugin>
-    
+    </joint>      
         
-    <!-- Fake LIDAR for obstacle detection -->
+    <!-- Fake LIDAR for obstacle detection 
     <link name="obstacle_detector">
       <gravity>false</gravity>
       <self_collide>false</self_collide>
@@ -265,9 +228,44 @@
         <axis>
           <xyz>1 1 1</xyz>
         </axis>
-    </joint> 
+    </joint> -->
     <!-- Fake LIDAR for obstacle detection -->
     
+    <!-- HARDWARE/WORLDMODEL PLUGIN -->
+    <plugin filename="libminho_robot.so" name="minho_robot">
+               <!-- ROBOT PARAMETERS -->
+        <max_linear_velocity>2.5</max_linear_velocity>
+        <max_angular_velocity>15.0</max_angular_velocity>
+        <max_ball_velocity>8.0</max_ball_velocity>
+        <ball_kick_angle>45.0</ball_kick_angle>
+        <ball_model_name>RoboCup MSL Ball</ball_model_name>
+        <vision_range_radius>6.0</vision_range_radius>
+        <max_backwards_grip_vel>30</max_backwards_grip_vel>
+        <max_rotation_grip_vel>20</max_rotation_grip_vel>
+        <grip_decay>24</grip_decay>
+               <!-- ROS NODE BOOT -->
+        <ros_boot>
+            <!-- COMS_NODE -->
+            <node>
+               <package>minho_team_ros</package>
+               <name>coms_node</name>
+               <flags>
+                  <flag>-s</flag>
+                  <flag>$ID</flag>
+               </flags>
+            </node>
+            <!-- CONTROL_NODE -->
+            <node>
+               <package>minho_team_ros</package>
+               <name>control_node</name>
+               <flags>
+                  <flag>-s</flag>
+                  <flag>$ID</flag>
+               </flags>
+            </node>
+
+        </ros_boot>
+    </plugin>
     
   </model>
 </sdf>
