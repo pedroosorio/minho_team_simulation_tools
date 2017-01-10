@@ -5,6 +5,12 @@
     <include>
       <uri>model://sun</uri>
     </include>
+   <include>
+      <uri>model://sun</uri>
+    </include>
+   <include>
+      <uri>model://sun</uri>
+    </include>
     <!-- Game field, including ref box table
     for reference, the two goalies, line markings
     and stoppers. -->
@@ -16,7 +22,7 @@
     </physics>
     
     <include>
-      <uri>model://robocup_msl_field</uri>
+      <uri>model://msl_official_field</uri>
     </include>
     <!-- Game ball, placed in the center of the
     field. -->

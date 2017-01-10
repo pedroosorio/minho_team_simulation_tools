@@ -3,7 +3,6 @@
   <model name="RoboCup MSL Ball">
     <static>false</static>
     <link name="ball">
-       <pose>0 0 0 0 0 0</pose>
         <inertial>
           <mass>0.41</mass>
           <inertia>
@@ -23,13 +22,13 @@
         </geometry>
         <surface>
             <bounce>
-              <restitution_coefficient>0.9</restitution_coefficient>
-              <threshold>0</threshold>
+              <restitution_coefficient>0.8</restitution_coefficient>
+              <threshold>0.01</threshold>
             </bounce>
             <friction>
               <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
+                <mu>0.1</mu>
+                <mu2>0.1</mu2>
               </ode>
             </friction>
             <contact>
@@ -41,22 +40,20 @@
       </collision>
       <visual name="visual">
         <geometry>
-          <sphere>
+         <!--<mesh>
+            <uri>model://robocup_msl_ball/meshes/msl_ball.dae</uri>
+         </mesh>  -->
+            <sphere>
             <radius>0.11</radius>
-          </sphere>
-        </geometry>
-        <material>
-            <ambient>0.75 0.3 0.0 1.0</ambient>
-            <diffuse>1.0 0.3 0.0 1.0</diffuse>
-            <specular>0.0225 0.0225 0.0225 1.0</specular>
-        </material>
+          </sphere>      
+         </geometry>
       </visual>
       
       <velocity_decay>
-        <linear>0.001</linear>
+        <linear>0.00001</linear>
         <angular>0.0005</angular>
       </velocity_decay>
-      <self_collide>true</self_collide>
+      <self_collide>false</self_collide>
       <gravity>true</gravity>
     </link>
   </model>
