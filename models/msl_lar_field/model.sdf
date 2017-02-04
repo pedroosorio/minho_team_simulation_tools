@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
   <model name="RoboCup MSL Field">
-   <pose>-10.2 -7.2 -0.1 0 0 0</pose>
+   <pose>-6.3 -4.97 -0.1 0 0 0</pose>
    <static>true</static>
 
     <link name="field">
@@ -9,7 +9,7 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/collision.STL</uri>
+             <uri>model://msl_lar_field/meshes/collision.STL</uri>
           </mesh>
         </geometry>
         <surface>
@@ -26,10 +26,10 @@
           </surface>
       </collision>
       <collision name="base_collision">
-      <pose>10.2 7.2 -0.25 0 0 0</pose>
+      <pose>6.3 4.97 -0.25 0 0 0</pose>
         <geometry>
           <box>
-            <size>20.4 14.4 0.5</size>
+            <size>12.6 9.94 0.5</size>
           </box>
         </geometry>
         <surface>
@@ -46,16 +46,16 @@
           </surface>
       </collision>
       <visual name="field_visual">
-        <pose>10.2 7.2 0.05 0 0 0</pose>
+        <pose>6.3 4.97 0.05 0 0 0</pose>
         <geometry>
           <box>
-            <size>20 14 0.1</size>
+            <size>12.2 9.54 0.1</size>
           </box>
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Field</name>
           </script>
         </material>
@@ -65,13 +65,13 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/lines.STL</uri>
+             <uri>model://msl_lar_field/meshes/lines.STL</uri>
           </mesh>
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Line</name>
           </script>
         </material>
@@ -81,20 +81,20 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/border.STL</uri>
+             <uri>model://msl_lar_field/meshes/border.STL</uri>
           </mesh>
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Border</name>
           </script>
         </material>
       </visual>
       
       <visual name="refbox_visual">
-      <pose>10.2 -0.5 0.5 0 0 0</pose>
+      <pose>6.3 -0.5 0.5 0 0 0</pose>
         <geometry>
           <box>
             <size>2 1 1</size>
@@ -102,15 +102,15 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Wood</name>
           </script>
         </material>
       </visual>
 
       <visual name="banner_visual">
-      <pose>10.2 -0.5 1.005 0 0 0</pose>
+      <pose>6.3 -0.5 1.005 0 0 0</pose>
         <geometry>
           <box>
             <size>2 1 0.01</size>
@@ -118,9 +118,9 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
-            <name>RoboCupField/OfficialRefBox</name>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
+            <name>RoboCupField/LarRefBox</name>
           </script>
         </material>
       </visual>
@@ -130,20 +130,20 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/goals.STL</uri>
+             <uri>model://msl_lar_field/meshes/goals.STL</uri>
           </mesh>
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Goal</name>
           </script>
         </material>
       </visual>
 
       <!--- NETS LEFT --->
-      <visual name="netlu_visual">
+      <!--<visual name="netlu_visual">
       <pose>0.81875 7.2 1.1625 0 0 0</pose>
         <geometry>
           <box>
@@ -152,8 +152,8 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
@@ -168,8 +168,8 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
@@ -184,8 +184,8 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
@@ -200,15 +200,16 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
-      </visual>
+      </visual>-->
 
 
       <!--- NETS RIGHT --->
+      <!--
       <visual name="netru_visual">
       <pose>19.58125 7.2 1.1625 0 0 0</pose>
         <geometry>
@@ -218,8 +219,8 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
@@ -233,8 +234,8 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
@@ -249,8 +250,8 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
@@ -265,12 +266,12 @@
         </geometry>
          <material>
           <script>
-            <uri>model://msl_official_field/materials/scripts/</uri>
-            <uri>model://msl_official_field/materials/textures/</uri>
+            <uri>model://msl_lar_field/materials/scripts/</uri>
+            <uri>model://msl_lar_field/materials/textures/</uri>
             <name>RoboCupField/Net</name>
           </script>
         </material>
-      </visual>
+      </visual>-->
   </link>
 
   </model>
