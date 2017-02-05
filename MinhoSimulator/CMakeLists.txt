@@ -33,10 +33,12 @@ include_directories(${Qt5Gui_INCLUDE_DIRS})
 ########################################
 
 ######################################################################
+include_directories(${PROJECT_DIRECTORY}/libs)
 set(MSIM_SRCDIR ${PROJECT_DIRECTORY}/src)
 set(msim_MOC_H ${PROJECT_DIRECTORY}/include/action_dialog.h ${PROJECT_DIRECTORY}/include/replay_window.h)
 qt5_wrap_cpp(msim_CPP ${msim_MOC_H})
-set(msim_SRC ${MSIM_SRCDIR}/main.cpp ${MSIM_SRCDIR}/action_dialog.cpp ${MSIM_SRCDIR}/replay_window.cpp)
+set(msim_SRC ${MSIM_SRCDIR}/main.cpp ${MSIM_SRCDIR}/action_dialog.cpp ${MSIM_SRCDIR}/replay_window.cpp
+    ${MSIM_SRCDIR}/replay.cpp)
 add_executable(minhosimulator ${msim_SRC} ${msim_CPP}) 
 target_include_directories(minhosimulator PUBLIC
 $<BUILD_INTERFACE:${PROJECT_DIRECTORY}/include>)
