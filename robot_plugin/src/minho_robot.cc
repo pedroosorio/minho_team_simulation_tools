@@ -340,9 +340,9 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
      if(msg->is_teleop) {
          //Apply robot velocities
          linear_vel_ = msg->linear_velocity;
-         mov_direction_ = msg->movement_direction;
+         mov_direction_ = 360-msg->movement_direction;
          angular_vel_ = msg->angular_velocity;
-         applyVelocities(math::Vector3(msg->linear_velocity, msg->movement_direction, msg->angular_velocity));
+         applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
          //Apply dribbling
          dribblers_on_ = msg->dribbler_on;
      }
@@ -350,9 +350,9 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
         if(!msg->is_teleop) {
             //Apply robot velocities
             linear_vel_ = msg->linear_velocity;
-            mov_direction_ = msg->movement_direction;
+            mov_direction_ = 360-msg->movement_direction;
             angular_vel_ = msg->angular_velocity;
-            applyVelocities(math::Vector3(msg->linear_velocity, msg->movement_direction, msg->angular_velocity));
+            applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
             //Apply dribbling
             dribblers_on_ = msg->dribbler_on;
         }

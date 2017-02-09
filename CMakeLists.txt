@@ -83,6 +83,7 @@ set_target_properties( minho_robot
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIRECTORY}/plugins
 )
 target_link_libraries(minho_robot ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+add_dependencies(minho_robot minho_team_ros_generate_messages_cpp)
 
 set(WORLD_DIR ${PROJECT_DIRECTORY}/world_plugin)
 include_directories(${WORLD_DIR}/include)
@@ -92,3 +93,4 @@ set_target_properties( minho_world
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIRECTORY}/plugins
 )
 target_link_libraries(minho_world ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+add_dependencies(minho_world minho_team_ros_generate_messages_cpp)

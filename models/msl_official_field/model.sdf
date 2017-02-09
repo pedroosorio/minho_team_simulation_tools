@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="RoboCup MSL Field">
+  <model name="RoboCup MSL Field - Official">
    <pose>-10.2 -7.2 -0.1 0 0 0</pose>
    <static>true</static>
 
@@ -9,7 +9,7 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/collision.STL</uri>
+             <uri>model://msl_official_field/meshes/ocollision.STL</uri>
           </mesh>
         </geometry>
         <surface>
@@ -65,7 +65,7 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/lines.STL</uri>
+             <uri>model://msl_official_field/meshes/olines.STL</uri>
           </mesh>
         </geometry>
          <material>
@@ -81,7 +81,7 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/border.STL</uri>
+             <uri>model://msl_official_field/meshes/oborder.STL</uri>
           </mesh>
         </geometry>
          <material>
@@ -130,7 +130,7 @@
         <geometry>
           <mesh>
              <scale>1 1 1</scale>
-             <uri>model://msl_official_field/meshes/goals.STL</uri>
+             <uri>model://msl_official_field/meshes/ogoals.STL</uri>
           </mesh>
         </geometry>
          <material>

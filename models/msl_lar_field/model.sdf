@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="RoboCup MSL Field">
+  <model name="RoboCup MSL Field - Lar">
    <pose>-6.3 -4.97 -0.1 0 0 0</pose>
    <static>true</static>
 
