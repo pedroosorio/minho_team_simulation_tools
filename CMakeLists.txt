@@ -55,21 +55,21 @@ include_directories(${Qt5Gui_INCLUDE_DIRS})
 ########################################
 
 ######################################################################
-include_directories(${PROJECT_DIRECTORY}/MinhoSimulator/libs)
-include_directories(${PROJECT_DIRECTORY}/MinhoSimulator/include)
-set(MSIM_SRCDIR ${PROJECT_DIRECTORY}/MinhoSimulator/src)
-set(msim_MOC_H ${PROJECT_DIRECTORY}/MinhoSimulator/include/action_dialog.h ${PROJECT_DIRECTORY}/MinhoSimulator/include/replay_window.h)
-qt5_wrap_cpp(msim_CPP ${msim_MOC_H})
-set(msim_SRC ${MSIM_SRCDIR}/main.cpp ${MSIM_SRCDIR}/action_dialog.cpp ${MSIM_SRCDIR}/replay_window.cpp
-    ${MSIM_SRCDIR}/replay.cpp)
-add_executable(minhosimulator ${msim_SRC} ${msim_CPP}) 
-target_include_directories(minhosimulator PUBLIC
-$<BUILD_INTERFACE:${PROJECT_DIRECTORY}/include>)
+#include_directories(${PROJECT_DIRECTORY}/MinhoSimulator/libs)
+#include_directories(${PROJECT_DIRECTORY}/MinhoSimulator/include)
+#set(MSIM_SRCDIR ${PROJECT_DIRECTORY}/MinhoSimulator/src)
+#set(msim_MOC_H ${PROJECT_DIRECTORY}/MinhoSimulator/include/action_dialog.h ${PROJECT_DIRECTORY}/MinhoSimulator/include/replay_window.h)
+#qt5_wrap_cpp(msim_CPP ${msim_MOC_H})
+#set(msim_SRC ${MSIM_SRCDIR}/main.cpp ${MSIM_SRCDIR}/action_dialog.cpp ${MSIM_SRCDIR}/replay_window.cpp
+#    ${MSIM_SRCDIR}/replay.cpp)
+#add_executable(minhosimulator ${msim_SRC} ${msim_CPP}) 
+#target_include_directories(minhosimulator PUBLIC
+#$<BUILD_INTERFACE:${PROJECT_DIRECTORY}/include>)
 
-set_target_properties(minhosimulator PROPERTIES COMPILE_FLAGS "-fPIC")
-target_compile_features(minhosimulator PRIVATE cxx_range_for)
-target_link_libraries(minhosimulator ${catkin_LIBRARIES} ${qt_LIBRARIES})
-add_dependencies(minhosimulator minho_team_ros_generate_messages_cpp)
+#set_target_properties(minhosimulator PROPERTIES COMPILE_FLAGS "-fPIC")
+#target_compile_features(minhosimulator PRIVATE cxx_range_for)
+#target_link_libraries(minhosimulator ${catkin_LIBRARIES} ${qt_LIBRARIES})
+#add_dependencies(minhosimulator minho_team_ros_generate_messages_cpp)
 ######################################################################
 
 ##################
