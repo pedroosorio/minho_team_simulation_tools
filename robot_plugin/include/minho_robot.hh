@@ -36,6 +36,7 @@
 #include "minho_team_ros/controlInfo.h"
 #include "minho_team_ros/teleop.h"
 #include "minho_team_ros/position.h"
+#include "minho_team_ros/obstacle.h"
 #include "minho_team_ros/requestKick.h"
 
 using namespace ros;
@@ -44,6 +45,7 @@ using minho_team_ros::controlInfo; //Namespace for control information msg - SUB
 using minho_team_ros::teleop; //Namespace for teleop information msg - SUBSCRIBING
 using minho_team_ros::requestKick; // Namespace for kicking service
 using minho_team_ros::position;
+using minho_team_ros::obstacle;
 
 namespace gazebo
 {
@@ -145,7 +147,7 @@ namespace gazebo
     /// \brief detects obstacles in the view range, whether they being friendly or foe,
     /// at this point, in reality, the robot doesn't distinguish between friends or foes
     /// return vector of positions containing the position of the detected obstalces
-    std::vector<minho_team_ros::position>detectObstacles();
+    std::vector<minho_team_ros::obstacle>detectObstacles();
     
     /// \brief mapps a detected point relative to the robot to the world position
     /// \param robot - position of the robot in the field, in meters
@@ -175,9 +177,6 @@ namespace gazebo
     /// \brief setus up model sensors, performing detection and type identification
     void setupSensors();
     
-    /// \brief reads ray sensor to perform mock obstacle detection. It pushes the position
-    /// of obstacles into current_state(robotInfo)
-    void mockObstacleDetection();
     // VARIABLES
         
     /// \brief Pointer to the model that defines this plugin

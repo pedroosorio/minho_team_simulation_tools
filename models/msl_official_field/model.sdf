@@ -14,8 +14,8 @@
         </geometry>
         <surface>
             <bounce>
-              <restitution_coefficient>0.8</restitution_coefficient>
-              <threshold>0.01</threshold>
+              <restitution_coefficient>0.3</restitution_coefficient>
+              <threshold>0</threshold>
             </bounce>
             <friction>
               <ode>
@@ -34,8 +34,8 @@
         </geometry>
         <surface>
             <bounce>
-              <restitution_coefficient>0.8</restitution_coefficient>
-              <threshold>0.01</threshold>
+              <restitution_coefficient>0.6</restitution_coefficient>
+              <threshold>0</threshold>
             </bounce>
             <friction>
               <ode>

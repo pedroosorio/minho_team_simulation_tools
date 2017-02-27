@@ -479,7 +479,7 @@ void Minho_Robot::publishRobotInfo()
                
         current_state.ball_position.x = ball_pose_.pos.x+error*cos(direction);
         current_state.ball_position.y = ball_pose_.pos.y+error*sin(direction);
-        
+        current_state.ball_position.z = ball_pose_.pos.z+error/2;
         current_state.sees_ball = true;
     } else current_state.sees_ball = false;             
     // Ball sensor
@@ -637,20 +637,24 @@ double Minho_Robot::generateNoise(double mean, double stdev, double min, double 
 /// \brief detects obstacles in the view range, whether they being friendly or foe,
 /// at this point, in reality, the robot doesn't distinguish between friends or foes
 /// return vector of positions containing the position of the detected obstalces
-std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
+std::vector<minho_team_ros::obstacle> Minho_Robot::detectObstacles()
 {
-    std::vector<minho_team_ros::position>obstacles;
+    std::vector<minho_team_ros::obstacle>obstacles;
     obstacles.clear();
     
     physics::WorldPtr world = _model_->GetWorld(); 
     std::vector<physics::ModelPtr> models_list = world->GetModels();
-    minho_team_ros::position position;
+    minho_team_ros::obstacle obs;
     double min = 0.0, max = 0.5;
     double ratio = 0.0;
-    
+    int type;
+    bool isObstacle;
     for(unsigned int id = 0; id < models_list.size(); id++){ // Generate used id's list
+        isObstacle = false;
         std::string mod = models_list[id]->GetName().substr(0,11);
-        if((mod.compare("minho_robot")==0 || mod.compare("other_robot")==0) && models_list[id]->GetName().compare(_model_->GetName())!=0){
+        if(mod.compare("minho_robot")==0){isObstacle=true;type=0;}
+        if(mod.compare("other_robot")==0){isObstacle=true;type=1;}
+        if(isObstacle&& models_list[id]->GetName().compare(_model_->GetName())!=0){
             math::Pose obstacle_pose = models_list[id]->GetWorldPose();
             obstacle_pose.pos.y *= Y_AXIS_MULTIPLIER;
             math::Vector3 robot_position = math::Vector3((float)model_pose_.pos.x,(float)model_pose_.pos.y,0.0);
@@ -666,9 +670,10 @@ std::vector<minho_team_ros::position> Minho_Robot::detectObstacles()
                double error = generateNoise(0.0,0.25,min,max);
                double direction = std::atan2(obstacle_pose.pos.y-model_pose_.pos.y,obstacle_pose.pos.x-model_pose_.pos.x);
                
-               position.x = obstacle_pose.pos.x+error*cos(direction);
-               position.y = obstacle_pose.pos.y+error*sin(direction);
-               obstacles.push_back(position);
+               obs.x = obstacle_pose.pos.x+error*cos(direction);
+               obs.y = obstacle_pose.pos.y+error*sin(direction);
+               obs.isenemy = type;
+               obstacles.push_back(obs);
             }
         }
     }
@@ -703,7 +708,7 @@ void Minho_Robot::computeVelocities()
       lpf_minor = 1-lpf_weight;
       current_state.ball_velocity.x = lpf_weight*((current_state.ball_position.x-last_vel_state.ball_position.x)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.x;  
       current_state.ball_velocity.y = lpf_weight*((current_state.ball_position.y-last_vel_state.ball_position.y)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.y; 
-      
+      current_state.ball_velocity.z = lpf_weight*((current_state.ball_position.z-last_vel_state.ball_position.z)/(time_interval*(float)it_limit))+lpf_minor*last_vel_state.ball_velocity.z;
       
       last_vel_state = current_state;
    }
@@ -784,9 +789,7 @@ std::string Minho_Robot::assertFlagValue(std::string value)
    
    ROS_ERROR("Error in flag assert.");
    return "";
-}
-
-    
+} 
     
 /// \brief setus up model sensors, performing detection and type identification
 void Minho_Robot::setupSensors()
@@ -812,32 +815,6 @@ void Minho_Robot::setupSensors()
       }
    }
 }    
-   
-/// \brief reads ray sensor to perform mock obstacle detection. It pushes the position
-/// of obstacles into current_state(robotInfo)
-void Minho_Robot::mockObstacleDetection()
-{
-   std::vector<double> ranges;
-   ranges.clear();
-   if(obstacle_detector) obstacle_detector->Ranges(ranges);
-   
-   position temp, robot_pos;
-   robot_pos.x = current_state.robot_pose.x;
-   robot_pos.y = current_state.robot_pose.y;
-   float robot_heading = current_state.robot_pose.z*(M_PI/180.0);
-   float angle = -M_PI;
-   float step = obstacle_detector->AngleResolution();
-   
-   for(int i=0;i<ranges.size();i++){
-      if(ranges[i]>0.30 && ranges[i]<VISION_RANGE_RADIUS){
-         current_state.obstacles.push_back(mapPointToWorld(robot_pos,
-                                                           robot_heading,
-                                                           ranges[i],
-                                                           angle));   
-      }
-      angle += step;
-   }
-}
   
 /// \brief mapps a detected point relative to the robot to the world position
 /// \param robot - position of the robot in the field, in meters

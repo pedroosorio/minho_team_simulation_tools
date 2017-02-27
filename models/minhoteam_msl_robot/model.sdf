@@ -263,6 +263,15 @@
                   <flag>$ID</flag>
                </flags>
             </node>
+            <!-- AI_NODE -->
+            <node>
+               <package>minho_team_ros</package>
+               <name>ai_node</name>
+               <flags>
+                  <flag>-s</flag>
+                  <flag>$ID</flag>
+               </flags>
+            </node>
 
         </ros_boot>
     </plugin>

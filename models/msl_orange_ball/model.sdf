@@ -23,18 +23,22 @@
         </geometry>
         <surface>
             <bounce>
-              <restitution_coefficient>0.8</restitution_coefficient>
+              <restitution_coefficient>0.6</restitution_coefficient>
               <threshold>0.01</threshold>
             </bounce>
             <friction>
               <ode>
-                <mu>0.1</mu>
-                <mu2>0.1</mu2>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <slip1>0.0</slip1>
+                <slip2>0.0</slip2>
               </ode>
             </friction>
             <contact>
               <ode>
-                <max_vel>30</max_vel>
+                <max_vel>10</max_vel>
+                <min_depth>0.001</min_depth>
+                <!--<kp>1e8</kp>-->
               </ode>
             </contact>
           </surface>
@@ -55,8 +59,8 @@
       </visual>
       
       <velocity_decay>
-        <linear>0.00001</linear>
-        <angular>0.0005</angular>
+        <linear>0.001</linear>
+        <angular>0.05</angular>
       </velocity_decay>
       <self_collide>false</self_collide>
       <gravity>true</gravity>
