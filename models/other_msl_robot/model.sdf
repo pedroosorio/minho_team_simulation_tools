@@ -124,7 +124,9 @@
         </axis>
     </joint>
     
-    
+    <plugin filename="libother_robot.so" name="other_robot">
+ 
+    </plugin>
     
   </model>
 </sdf>

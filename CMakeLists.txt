@@ -85,6 +85,16 @@ set_target_properties( minho_robot
 target_link_libraries(minho_robot ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(minho_robot minho_team_ros_generate_messages_cpp)
 
+set(OTHER_DIR ${PROJECT_DIRECTORY}/other_plugin)
+include_directories(${OTHER_DIR}/include)
+add_library(other_robot SHARED ${OTHER_DIR}/src/other_robot.cc)
+set_target_properties( other_robot
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIRECTORY}/plugins
+)
+target_link_libraries(other_robot ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+add_dependencies(other_robot minho_team_ros_generate_messages_cpp)
+
 set(WORLD_DIR ${PROJECT_DIRECTORY}/world_plugin)
 include_directories(${WORLD_DIR}/include)
 add_library(minho_world SHARED ${WORLD_DIR}/src/minho_world.cc)
