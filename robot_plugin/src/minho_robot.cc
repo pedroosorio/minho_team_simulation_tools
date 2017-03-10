@@ -50,6 +50,7 @@ Minho_Robot::Minho_Robot()
     MAX_BALL_VEL = 8.0;
     SHOOT_ANGLE = 0.0;
     BALL_MODEL_NAME = "RoboCup MSL Ball";
+    controlCommandsReceived = false;
     VISION_RANGE_RADIUS = 5.0;
     MAX_BACKWARDS_VEL = GRIP_DECAY = MAX_ROTATION_VEL = 30.0;
 }
@@ -298,26 +299,46 @@ void Minho_Robot::autoRenameRobot()
 void Minho_Robot::onUpdate()
 {
     static int kick_timer = 0;
+    static int timeout_counter = 0;
+    
+    // Check and kill defunct child processes
+    int status;
+    pid_t p;
+    for(int i=0;i<childs.size();i++){
+        p = waitpid(childs[i].get_id(), &status, WNOHANG);
+    }
+
     // lock resources
+    if(!controlCommandsReceived) timeout_counter++;
+    else timeout_counter = 0;
+    
+    if(timeout_counter>1000 && !controlCommandsReceived) timeout_counter = 5;
     control_info_mutex_.lock();
     
     model_pose_ = _model_->GetWorldPose(); // get robot position
     model_pose_.pos.y *= Y_AXIS_MULTIPLIER;
     getGameBallModel(); // finds and computes distance to game ball
-
-    // Apply defined velocities to the robot
-    _model_->SetLinearVel(linear_velocity_);
-    _model_->SetAngularVel(angular_velocity_);
     
-    // Activate dribbling algorithm, if the ball is in possession and
-    // dribling is activated
-    if(kick_requested_ && has_game_ball_) kick_timer = 10;
-    else if(kick_timer>0) kick_timer--;
-    if(dribblers_on_ && has_game_ball_ && (kick_timer<=0)) dribbleGameBall();
-    if(kick_requested_ && has_game_ball_) kickGameBall(kick_is_pass_,kick_force_,kick_dir_);
+    if(timeout_counter<5){
+       // Apply defined velocities to the robot
+       _model_->SetLinearVel(linear_velocity_);
+       _model_->SetAngularVel(angular_velocity_);
+       
+       // Activate dribbling algorithm, if the ball is in possession and
+       // dribling is activated
+       if(kick_requested_ && has_game_ball_) kick_timer = 10;
+       else if(kick_timer>0) kick_timer--;
+       if(dribblers_on_ && has_game_ball_ && (kick_timer<=0)) dribbleGameBall();
+       if(kick_requested_ && has_game_ball_) kickGameBall(kick_is_pass_,kick_force_,kick_dir_);
+    }else {
+       linear_velocity_.x = linear_velocity_.y = angular_velocity_.x = angular_velocity_.y = 0;
+       _model_->SetLinearVel(linear_velocity_);
+       _model_->SetAngularVel(angular_velocity_);
+    }
     
     // Publish robotInfo over ROS
     publishRobotInfo();
+    controlCommandsReceived = false;
     last_state = current_state;
     // unlock resources
     control_info_mutex_.unlock();
@@ -345,6 +366,7 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
          applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
          //Apply dribbling
          dribblers_on_ = msg->dribbler_on;
+         controlCommandsReceived = true;
      }
     } else { // Autonomous
         if(!msg->is_teleop) {
@@ -355,6 +377,7 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
             applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
             //Apply dribbling
             dribblers_on_ = msg->dribbler_on;
+            controlCommandsReceived = true;
         }
     }
     

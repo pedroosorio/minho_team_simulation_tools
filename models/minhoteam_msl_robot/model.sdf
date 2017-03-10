@@ -245,7 +245,7 @@
         <grip_decay>24</grip_decay>
                <!-- ROS NODE BOOT -->
         <ros_boot>
-            <!-- COMS_NODE
+            <!-- COMS_NODE-->
             <node>
                <package>minho_team_ros</package>
                <name>coms_node</name>
@@ -253,8 +253,8 @@
                   <flag>-s</flag>
                   <flag>$ID</flag>
                </flags>
-            </node> -->
-            <!-- CONTROL_NODE 
+            </node> 
+            <!-- CONTROL_NODE -->
             <node>
                <package>minho_team_ros</package>
                <name>control_node</name>
@@ -262,8 +262,8 @@
                   <flag>-s</flag>
                   <flag>$ID</flag>
                </flags>
-            </node>-->
-            <!-- AI_NODE
+            </node>
+            <!-- AI_NODE-->
             <node>
                <package>minho_team_ros</package>
                <name>ai_node</name>
@@ -271,7 +271,7 @@
                   <flag>-s</flag>
                   <flag>$ID</flag>
                </flags>
-            </node> -->
+            </node> 
 
         </ros_boot>
     </plugin>

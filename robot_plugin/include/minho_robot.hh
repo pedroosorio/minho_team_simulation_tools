@@ -295,6 +295,9 @@ namespace gazebo
     
     /// \brief handler of obstacle_detector mock sensor
     gazebo::sensors::RaySensor *obstacle_detector;
+
+   /// \brief flag to implement control timeout
+    bool controlCommandsReceived;
    
   };
 }
