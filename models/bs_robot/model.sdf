@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="minho_robot">
+  <model name="bs_robot">
     <static>false</static>
     <link name="base">
        <pose>0 0 0.01 0 0 1.57</pose>
@@ -19,7 +19,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://minhoteam_msl_robot/meshes/base.stl</uri>
+            <uri>model://bs_robot/meshes/base.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -38,7 +38,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://minhoteam_msl_robot/meshes/base.stl</uri>
+            <uri>model://bs_robot/meshes/base.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -57,7 +57,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://minhoteam_msl_robot/meshes/mid.stl</uri>
+            <uri>model://bs_robot/meshes/mid.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -65,7 +65,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://minhoteam_msl_robot/meshes/mid.stl</uri>
+            <uri>model://bs_robot/meshes/mid.stl</uri>
           </mesh>
         </geometry>
             <material>
@@ -93,7 +93,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://minhoteam_msl_robot/meshes/head.stl</uri>
+            <uri>model://bs_robot/meshes/head.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -114,7 +114,7 @@
         <geometry>
           <mesh>
             <scale>0.3 0.3 0.3</scale>
-            <uri>model://minhoteam_msl_robot/meshes/nr_1.stl</uri>
+            <uri>model://bs_robot/meshes/nr_1.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -129,7 +129,7 @@
         <geometry>
           <mesh>
             <scale>0.3 0.3 0.3</scale>
-            <uri>model://minhoteam_msl_robot/meshes/nr_1.stl</uri>
+            <uri>model://bs_robot/meshes/nr_1.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -144,7 +144,7 @@
         <geometry>
           <mesh>
             <scale>0.3 0.3 0.3</scale>
-            <uri>model://minhoteam_msl_robot/meshes/nr_1.stl</uri>
+            <uri>model://bs_robot/meshes/nr_1.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -182,99 +182,7 @@
         </axis>
     </joint>      
         
-    <!-- Fake LIDAR for obstacle detection 
-    <link name="obstacle_detector">
-      <gravity>false</gravity>
-      <self_collide>false</self_collide>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>0.1 0.1 0.1</size>  
-          </box>
-        </geometry>
-      </visual>
-      <sensor name="visual_range_finder" type="ray">
-        <pose>0.00 0 0.4 0 -0 0</pose>
-        <ray>
-          <scan>
-            <horizontal>
-              <samples>100</samples>
-              <resolution>1</resolution>
-              <min_angle>-3.14159</min_angle>
-              <max_angle>3.14159</max_angle>
-            </horizontal>
-          </scan>
-          <range>
-            <min>0.3</min>
-            <max>6.0</max>
-            <resolution>0.1</resolution>
-          </range>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.05</stddev>
-          </noise>
-        </ray>
-
-        <always_on>1</always_on>
-        <update_rate>60</update_rate>
-      </sensor>
-    </link>
-    
-    <joint type="fixed" name="obs_sensor">
-        <pose>0 0 0.4 0 0 0</pose>
-        <child>obstacle_detector</child>
-        <parent>mid</parent>
-        <axis>
-          <xyz>1 1 1</xyz>
-        </axis>
-    </joint> -->
-    <!-- Fake LIDAR for obstacle detection -->
-    
-    <!-- HARDWARE/WORLDMODEL PLUGIN -->
-    <plugin filename="libminho_robot.so" name="minho_robot">
-               <!-- ROBOT PARAMETERS -->
-        <max_linear_velocity>2.5</max_linear_velocity>
-        <max_angular_velocity>15.0</max_angular_velocity>
-        <max_ball_velocity>8.0</max_ball_velocity>
-        <ball_kick_angle>45.0</ball_kick_angle>
-        <ball_model_name>RoboCup MSL Ball</ball_model_name>
-        <vision_range_radius>6.0</vision_range_radius>
-        <max_backwards_grip_vel>30</max_backwards_grip_vel>
-        <max_rotation_grip_vel>30</max_rotation_grip_vel>
-        <grip_decay>24</grip_decay>
-               <!-- ROS NODE BOOT -->
-        <ros_boot>
-            <!-- COMS_NODE-->
-            <node>
-               <package>minho_team_ros</package>
-               <name>coms_node</name>
-               <flags>
-                  <flag>-s</flag>
-                  <flag>$ID</flag>
-               </flags>
-            </node> 
-            <!-- CONTROL_NODE -->
-            <node>
-               <package>minho_team_ros</package>
-               <name>control_node</name>
-               <flags>
-                  <flag>-s</flag>
-                  <flag>$ID</flag>
-               </flags>
-            </node>
-            <!-- AI_NODE-->
-            <node>
-               <package>minho_team_ros</package>
-               <name>ai_node</name>
-               <flags>
-                  <flag>-s</flag>
-                  <flag>$ID</flag>
-               </flags>
-            </node> 
-
-        </ros_boot>
-    </plugin>
+        <plugin filename="libbs_rplugin.so" name="bs_rplugin"> </plugin>
     
   </model>
 </sdf>

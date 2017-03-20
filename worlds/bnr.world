@@ -16,13 +16,6 @@
     for reference, the two goalies, line markings
     and stoppers. -->
     
-    <include>
-      <uri>model://bnr_field</uri>
-    </include>
-    
-    <include>
-      <uri>model://bnr_oneA</uri>
-    </include>
 
   </world>
 </sdf>

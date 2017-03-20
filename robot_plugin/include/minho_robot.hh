@@ -298,6 +298,9 @@ namespace gazebo
 
    /// \brief flag to implement control timeout
     bool controlCommandsReceived;
+    
+    /// \brief flag to control timer between kicks
+    unsigned int kick_stab_counter;
    
   };
 }

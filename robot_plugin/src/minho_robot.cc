@@ -43,6 +43,7 @@ Minho_Robot::Minho_Robot()
     game_ball_in_world_ = false;
     poss_threshold_distance_ = 0.3;
     kick_requested_ = false;
+    kick_stab_counter = 0;
     
     // Default values
     MAX_LIN_VEL = 2.5;
@@ -300,7 +301,7 @@ void Minho_Robot::onUpdate()
 {
     static int kick_timer = 0;
     static int timeout_counter = 0;
-    
+    if(kick_stab_counter<=30) { kick_stab_counter++; kick_requested_ = false; }
     // Check and kill defunct child processes
     int status;
     pid_t p;
@@ -329,7 +330,10 @@ void Minho_Robot::onUpdate()
        if(kick_requested_ && has_game_ball_) kick_timer = 10;
        else if(kick_timer>0) kick_timer--;
        if(dribblers_on_ && has_game_ball_ && (kick_timer<=0)) dribbleGameBall();
-       if(kick_requested_ && has_game_ball_) kickGameBall(kick_is_pass_,kick_force_,kick_dir_);
+       if(kick_requested_ && has_game_ball_ && kick_stab_counter>30) {
+        kickGameBall(kick_is_pass_,kick_force_,kick_dir_);
+        kick_stab_counter = 0;
+       }
     }else {
        linear_velocity_.x = linear_velocity_.y = angular_velocity_.x = angular_velocity_.y = 0;
        _model_->SetLinearVel(linear_velocity_);
@@ -393,6 +397,7 @@ bool Minho_Robot::kickServiceCallback(requestKick::Request &req,requestKick::Res
 {
    //Apply ball kicking
    if(req.kick_strength>0){
+       ROS_INFO("Kick Service called");
        kick_requested_ = true;
        kick_force_ = req.kick_strength;
        kick_dir_ = req.kick_direction;

@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="mtbasestation">
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- Game field, including ref box table
+    for reference, the two goalies, line markings
+    and stoppers. -->
+    
+     <physics type='ode'>
+      <max_step_size>0.03125</max_step_size>
+      <real_time_update_rate>32</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+    </physics>
+    
+    <include>
+      <uri>model://msl_lar_field</uri>
+    </include>
+    <!-- General bs ball -->
+    <include>
+      <uri>model://genbs_ball</uri>
+      <name>ball_bs</name>
+    </include>
+    
+    <!-- Robots -->
+    <include>
+      <uri>model://bs_robot</uri>
+      <name>robot_1</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_robot</uri>
+      <name>robot_2</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_robot</uri>
+      <name>robot_3</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_robot</uri>
+      <name>robot_4</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_robot</uri>
+      <name>robot_5</name>
+    </include>
+    
+    <!-- Balls -->
+    <include>
+      <uri>model://bs_ball</uri>
+      <name>ball_1</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_ball</uri>
+      <name>ball_2</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_ball</uri>
+      <name>ball_3</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_ball</uri>
+      <name>ball_4</name>
+    </include>
+    
+    <include>
+      <uri>model://bs_ball</uri>
+      <name>ball_5</name>
+    </include>
+    
+    <plugin filename="libbs_plugin.so" name="bs_plugin">
+    </plugin>
+    
+  </world>
+</sdf>
