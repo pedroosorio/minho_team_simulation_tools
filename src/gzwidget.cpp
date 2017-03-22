@@ -410,6 +410,7 @@ void GzWidget::mouseReleaseEvent(QMouseEvent *event)
     panning = orbiting = false;
     if(isModelSelected && allowAllControls) { if(modelHighlighter) modelHighlighter->SetMaterial("Gazebo/RedTransparent");
         isModelSelected = false;
+        emit modelReleased(QString::fromStdString(highlightedModel->GetName()));
     }
     indicator->SetVisible(false);
 }
@@ -436,6 +437,7 @@ void GzWidget::mousePressEvent(QMouseEvent *event)
         modelHighlighter->SetMaterial("Gazebo/BlueTransparent");
         isModelFollowed = false;
         modelFollower->SetVisible(false);
+        emit modelClicked(QString::fromStdString(highlightedModel->GetName()));
         return;
     }
     if(modelHighlighter->GetVisible()&&(event->buttons()&Qt::RightButton)){

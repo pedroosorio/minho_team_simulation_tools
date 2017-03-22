@@ -76,6 +76,10 @@ private slots:
     void setup3DVisualPtrs();
     /// \brief slot function to compute and send current baseStationInfo message
     void sendBaseStationUpdate();
+
+
+    /// \brief print test function
+    void printSlot(QString info) { ROS_INFO("Slot: %s",info.toStdString().c_str()); }
 signals:
     void newRobotInformationReceived();
 private:

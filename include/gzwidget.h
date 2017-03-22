@@ -27,6 +27,10 @@ signals:
     void newFrameRendered();
     /// \brief signal that informs that indicators need update
     void newIndicatorUpdate();
+    /// \brief signal emmited when a model is clicked
+    void modelClicked(QString model_name);
+    /// \brief signal emmited when a model is released
+    void modelReleased(QString model_name);
 protected:
     /// \brief overload of paintEngine() to avoid Qt painting over
     /// widget. Ogre deals with all the widget painting

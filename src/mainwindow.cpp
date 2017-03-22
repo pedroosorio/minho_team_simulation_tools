@@ -33,6 +33,10 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     connect(robotStateDetector,SIGNAL(timeout()),this,SLOT(detectRobotsState()));
     connect(sendDataTimer,SIGNAL(timeout()),this,SLOT(sendBaseStationUpdate()));
     robotStateDetector->start(300);
+
+    // Signal test
+    connect(ui->widget,SIGNAL(modelClicked(QString)),this,SLOT(printSlot(QString)));
+    connect(ui->widget,SIGNAL(modelReleased(QString)),this,SLOT(printSlot(QString)));
 }
 
 void MainWindow::updateAgentInfo(void *packet)
