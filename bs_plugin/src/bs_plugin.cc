@@ -55,9 +55,18 @@ void Bs_Plugin::modifyModel(ConstModelPtr &_msg)
             gazebo::math::Pose motion;
             motion.Set(0,0,_msg->pose().position().z(),0,0,0);
             model->SetWorldPose(model->GetWorldPose()+motion);
-        } /*else if(_msg->id()==4){ // Absolute pose
-            model->SetWorldPose(rotate_pose(_msg->pose().position(),_msg->pose().position().z()));
-        }*/
+        } else if(_msg->id()==4){ // Absolute pose
+            gazebo::math::Pose pose;
+            if(model->GetName().find("ball") != std::string::npos){
+                pose.Set(_msg->pose().position().x(),-_msg->pose().position().y(),_msg->pose().position().z(),0,0,0);
+            } else {
+                pose.Set(_msg->pose().position().x(),-_msg->pose().position().y(),0,0,0,0);
+                gazebo::math::Vector3 orientation = pose.rot.GetAsEuler();
+                orientation.z=M_PI-_msg->pose().position().z()*(M_PI/180.0);
+                pose = gazebo::math::Pose(pose.pos,orientation);
+            }
+            model->SetWorldPose(pose);
+        }
     }
 
     if(_msg->id()==3){ // reset world

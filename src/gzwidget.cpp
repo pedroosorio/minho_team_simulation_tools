@@ -473,7 +473,7 @@ bool GzWidget::isSelectableModel()
     if(vis && !vis->IsPlane() && !vis->IsStatic()){
         vis = vis->GetRootVisual();
         Box bbox = vis->GetBoundingBox().Ign();
-        if(bbox.XLength()<max_selection_size && bbox.YLength()<max_selection_size){
+        if(bbox.XLength()<max_selection_size && bbox.YLength()<max_selection_size && vis->GetTransparency()==0.0){
             tempModel = vis;
             return true;
         }
@@ -551,12 +551,12 @@ void GzWidget::rotateModelInWorld(std::__cxx11::string model_name, float amount)
     modelPub->Publish(msg);
 }
 
-void GzWidget::setModelPoseInWorld(std::__cxx11::string model_name, Vector3d pos, float rot)
+void GzWidget::setModelPoseInWorld(std::__cxx11::string model_name, Vector3d pos)
 {
     msgs::Model msg;
     msg.set_name(model_name);
     msg.set_id(4); // if id = 0, it is a relative transformation/rotation
-    msgs::Set(msg.mutable_pose(), Pose3d(pos.X(), pos.Y(), pos.Z(), 0, 0, rot));
+    msgs::Set(msg.mutable_pose(), Pose3d(pos.X(), pos.Y(), pos.Z(), 0, 0, 0));
     modelPub->Publish(msg);
 }
 
@@ -634,4 +634,9 @@ void GzWidget::moveToFirstPerson()
    Pose3d pose; pose.Set(camPos,Vector3d(0,0,0));
    camera->SetWorldPose(pose);
    biasFPS = Vector3d(0,0,camPos.Z());
+}
+
+void GzWidget::setCameraPose(Vector3d pos, Vector3d rot)
+{
+
 }

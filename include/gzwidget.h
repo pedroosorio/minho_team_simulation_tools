@@ -18,6 +18,8 @@ public:
     /// \brief class destructor. Cleanly calls close, terminating
     /// everything up
     ~GzWidget();
+    /// \brief returns pointer to scene
+    ScenePtr getScene() {if(camera) return camera->GetScene(); else return NULL;}
 signals:
     /// \brief signal that informs that rendering system is ready
     void renderingReady();
@@ -48,9 +50,12 @@ public slots:
     /// gazebo master, setting everything up. Also, instanciates a RenderEngine
     /// and creates a scene.
     void init(QString worldname);
-
-
+    /// \brief resets world
     void resetWorld();
+    /// \brief uses gazebo's transport layer in order to set model's pose
+    void setModelPoseInWorld(std::string model_name, ignition::math::Vector3d pos);
+    /// \brief sets camera pose
+    void setCameraPose(Vector3d pos, Vector3d rot);
 private slots:
     /// \brief overload of show event. If the rendering system is
     /// not up yet, creates an Ogre handle and assigns a window
@@ -99,8 +104,6 @@ private slots:
     void updateIndicators();
     /// \brief uses gazebo's transport layer in order to rotate a model in the world
     void rotateModelInWorld(std::string model_name, float amount);
-    /// \brief uses gazebo's transport layer in order to set model's pose
-    void setModelPoseInWorld(std::string model_name, ignition::math::Vector3d pos, float rot);
     /// \brief uses gazebo's transport layer in order to move a model in the world in xy
     void panModelInWorld(std::string model_name, ignition::math::Vector3d motion_vector);
     /// \brief uses gazebo's transport layer in order to move a model in the world in z

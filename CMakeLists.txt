@@ -1,16 +1,41 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(minhobasestation C CXX)
+project(minho_team_station C CXX)
 
 set(CMAKE_BUILD_TYPE Debug)
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	std_msgs
-	minho_team_ros	
+	message_generation	
+	sensor_msgs
+	genmsg	
+	minho_team_ros		
 )
-set(PROJECT_DIRECTORY ${minhobasestation_SOURCE_DIR})
+
+###################################
+## catkin specific configuration ##
+###################################
+## The catkin_package macro generates cmake config files for your package
+## Declare things to be passed to dependent projects
+## INCLUDE_DIRS: uncomment this if you package contains header files
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
+	catkin_package(
+		#  INCLUDE_DIRS include
+		#  LIBRARIES minho_team
+		CATKIN_DEPENDS message_runtime std_msgs sensor_msgs
+		DEPENDS sensor_msgs
+	)
+
+set(PROJECT_DIRECTORY ${minho_team_station_SOURCE_DIR})
+include_directories($ENV{HOME}/Common)
+
 ######################################################################
 #Linking steps for ROS and Gazebo Libraries
 ########################################
@@ -46,14 +71,14 @@ set(mbs_MOC_H ${PROJECT_DIRECTORY}/include/gzwidget.h ${PROJECT_DIRECTORY}/inclu
 qt5_wrap_cpp(mbs_CPP ${mbs_MOC_H})
 set(mbs_SRC ${MBS_SRCDIR}/main.cpp ${MBS_SRCDIR}/gzwidget.cpp ${MBS_SRCDIR}/mainwindow.cpp ${MBS_SRCDIR}/multicastpp.cpp
     ${MBS_SRCDIR}/thpool.c)
-add_executable(minhobasestation ${mbs_SRC} ${mbs_CPP}) 
-target_include_directories(minhobasestation PUBLIC
+add_executable(basestation ${mbs_SRC} ${mbs_CPP}) 
+target_include_directories(basestation PUBLIC
 $<BUILD_INTERFACE:${PROJECT_DIRECTORY}/include>)
 
-set_target_properties(minhobasestation PROPERTIES COMPILE_FLAGS "-fPIC")
-target_compile_features(minhobasestation PRIVATE cxx_range_for)
-target_link_libraries(minhobasestation ${IGNITION-MATH_LIBRARIES} ${catkin_LIBRARIES} ${qt_LIBRARIES} ${GAZEBO_LIBRARIES})
-add_dependencies(minhobasestation minho_team_ros_generate_messages_cpp)
+set_target_properties(basestation PROPERTIES COMPILE_FLAGS "-fPIC")
+target_compile_features(basestation PRIVATE cxx_range_for)
+target_link_libraries(basestation ${IGNITION-MATH_LIBRARIES} ${catkin_LIBRARIES} ${qt_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(basestation minho_team_ros_generate_messages_cpp)
 ######################################################################
 
 ###################
