@@ -11,14 +11,22 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    for(int i=0;i<NROBOTS;i++) robwidgets[i] = NULL;
     ui->setupUi(this);
+    robwidgetsReady = false;
+    ui->statusBar->showMessage("Loading resources ...");
+    setupGraphicsUI();
+
+    mBsInfo.roles.resize(NROBOTS);
+    mBsInfo.gamestate = sSTOPPED;
+
     rtdb = coms;
     this->isOfficialField = isOfficialField;
     initGazeboBaseStationWorld();
-    connect(ui->widget,SIGNAL(newFrameRendered()),this,SLOT(setup3DVisualPtrs()));
-    ui->widget->init("mtbasestation");
-    ui->widget->setGrid(false);
-    ui->widget->setAllControlsMode(true);
+    connect(ui->gzwidget,SIGNAL(newFrameRendered()),this,SLOT(setup3DVisualPtrs()));
+    ui->gzwidget->init("mtbasestation");
+    ui->gzwidget->setGrid(false);
+    ui->gzwidget->setAllControlsMode(true);
 
     bsBallVisual = NULL;
     mBsInfo.agent_id = 6;
@@ -35,8 +43,59 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     robotStateDetector->start(300);
 
     // Signal test
-    connect(ui->widget,SIGNAL(modelClicked(QString)),this,SLOT(printSlot(QString)));
-    connect(ui->widget,SIGNAL(modelReleased(QString)),this,SLOT(printSlot(QString)));
+    connect(ui->gzwidget,SIGNAL(modelClicked(QString)),this,SLOT(printSlot(QString)));
+    connect(ui->gzwidget,SIGNAL(modelReleased(QString)),this,SLOT(printSlot(QString)));
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::setupGraphicsUI()
+{
+    QVBoxLayout *layouts = new QVBoxLayout[5];
+    ui->frame->setLayout(&layouts[0]);
+    layouts[0].addWidget(ui->r1widget);
+    layouts[0].setSizeConstraint(QLayout::SetMaximumSize);
+    layouts[0].setContentsMargins(0,0,0,0);
+    ui->r1widget->setRobotId(1);
+    ui->r1widget->setWidgetState(false);
+    robwidgets[0] = ui->r1widget;
+    //--
+    ui->frame_2->setLayout(&layouts[1]);
+    layouts[1].addWidget(ui->r2widget);
+    layouts[1].setSizeConstraint(QLayout::SetMaximumSize);
+    layouts[1].setContentsMargins(0,0,0,0);
+    ui->r2widget->setRobotId(2);
+    ui->r2widget->setWidgetState(false);
+    robwidgets[1] = ui->r2widget;
+    //--
+    ui->frame_3->setLayout(&layouts[2]);
+    layouts[2].addWidget(ui->r3widget);
+    layouts[2].setSizeConstraint(QLayout::SetMaximumSize);
+    layouts[2].setContentsMargins(0,0,0,0);
+    ui->r3widget->setRobotId(3);
+    ui->r3widget->setWidgetState(false);
+    robwidgets[2] = ui->r3widget;
+    //--
+    ui->frame_4->setLayout(&layouts[3]);
+    layouts[3].addWidget(ui->r4widget);
+    layouts[3].setSizeConstraint(QLayout::SetMaximumSize);
+    layouts[3].setContentsMargins(0,0,0,0);
+    ui->r4widget->setRobotId(4);
+    ui->r4widget->setWidgetState(false);
+    robwidgets[3] = ui->r4widget;
+    //--
+    ui->frame_5->setLayout(&layouts[4]);
+    layouts[4].addWidget(ui->r5widget);
+    layouts[4].setSizeConstraint(QLayout::SetMaximumSize);
+    layouts[4].setContentsMargins(0,0,0,0);
+    ui->r5widget->setRobotId(5);
+    ui->r5widget->setWidgetState(false);
+    robwidgets[4] = ui->r5widget;
+
+    robwidgetsReady = true;
 }
 
 void MainWindow::updateAgentInfo(void *packet)
@@ -50,9 +109,10 @@ void MainWindow::updateAgentInfo(void *packet)
 
     if(agent_data.agent_id<1 || agent_data.agent_id>(NROBOTS));
     else {
+      if(robwidgets[agent_data.agent_id-1])robwidgets[agent_data.agent_id-1]->updateInformation(agent_data.hardware_info);
       robots[agent_data.agent_id-1] = agent_data;
       robotReceivedPackets[agent_data.agent_id-1]++;
-      emit newRobotInformationReceived();
+      emit newRobotInformationReceived(agent_data.agent_id);
     }
     return;
 }
@@ -72,6 +132,9 @@ void MainWindow::sendBaseStationUpdate()
 
     // Update Graphics
     updateGraphics();
+    ui->statusBar->showMessage("Ξ Rendering at "+QString::number(ui->gzwidget->getAverageFPS())+" fps");
+    // Update Roles from robot widgets
+    for(unsigned int rob=0;rob<NROBOTS;rob++) mBsInfo.roles[rob] = robwidgets[rob]->getCurrentRole();
     // Send information to Robots
     //sendInfoOverMulticast();
 }
@@ -135,6 +198,7 @@ void MainWindow::updateGraphics()
 {
     int onRobots = 0;
     for(int i=0;i<NROBOTS;i++){
+        robwidgets[i]->setWidgetState(robotState[i]);
         if(robotState[i]){
             // show stuff from robot i
             setVisibilityRobotGraphics(i,true);
@@ -156,6 +220,7 @@ void MainWindow::updateGraphics()
         } else {
             // hide stuff from robot i
             setVisibilityRobotGraphics(i,false);
+            mBsInfo.roles[i] = rSTOP;
         }
     }
 
@@ -166,7 +231,7 @@ void MainWindow::updateGraphics()
 
 void MainWindow::setCameraPose(float x, float y, float z, float yaw, float pitch, float roll)
 {
-    ui->widget->setCameraPose(Vector3d(x,y,z),Vector3d(yaw,pitch,roll));
+    ui->gzwidget->setCameraPose(Vector3d(x,y,z),Vector3d(yaw,pitch,roll));
 }
 
 void MainWindow::setRobotPose(int robot_id, float x, float y, float z)
@@ -174,7 +239,7 @@ void MainWindow::setRobotPose(int robot_id, float x, float y, float z)
     if(robot_id<1||robot_id>NROBOTS) return;
     std::string robotprefix = "robot_";
     std::string modelName = robotprefix+std::to_string(robot_id);
-    ui->widget->setModelPoseInWorld(modelName,Vector3d(x,y,z));
+    ui->gzwidget->setModelPoseInWorld(modelName,Vector3d(x,y,z));
 }
 
 void MainWindow::setBallPosition(int ball_id, float x, float y, float z)
@@ -184,7 +249,7 @@ void MainWindow::setBallPosition(int ball_id, float x, float y, float z)
     std::string bsballname = "ball_bs";
     std::string modelName = bsballname;
     if(ball_id>0) modelName = ballprefix+std::to_string(ball_id);
-    ui->widget->setModelPoseInWorld(modelName,Vector3d(x,y,z));
+    ui->gzwidget->setModelPoseInWorld(modelName,Vector3d(x,y,z));
 }
 
 void MainWindow::detectRobotsState()
@@ -192,14 +257,13 @@ void MainWindow::detectRobotsState()
     for(int i=0;i<NROBOTS;i++) {
         if(robotReceivedPackets[i]>6) robotState[i] = true;
         else robotState[i] = false;
-
         robotReceivedPackets[i] = 0;
     }
 }
 
 void MainWindow::setup3DVisualPtrs()
 {
-    scene = ui->widget->getScene();
+    scene = ui->gzwidget->getScene();
     std::string robotprefix = "robot_";
     std::string ballprefix = "ball_";
     std::string bsballname = "ball_bs";
@@ -207,7 +271,7 @@ void MainWindow::setup3DVisualPtrs()
     bsBallVisual = scene->GetVisual(bsballname);
     if(bsBallVisual!=NULL){
         bsBallVisual = bsBallVisual->GetRootVisual();
-        disconnect(ui->widget,SIGNAL(newFrameRendered()),this,SLOT(setup3DVisualPtrs()));
+        disconnect(ui->gzwidget,SIGNAL(newFrameRendered()),this,SLOT(setup3DVisualPtrs()));
         sendDataTimer->start(CYCLE_TIME);
     }else return;
 
@@ -219,7 +283,8 @@ void MainWindow::setup3DVisualPtrs()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    ui->widget->close();
+    ui->gzwidget->close();
+    ROS_INFO("Terminating process %d",run_gz->get_id());
     run_gz->terminate();
     int status = 0;
     waitpid(run_gz->get_id(), &status, WNOHANG);
@@ -231,11 +296,6 @@ void MainWindow::deserializeROSMessage(udp_packet *packet, Message *msg)
 {
     ros::serialization::IStream istream(packet->packet, packet->packet_size);
     ros::serialization::deserialize(istream, *msg);
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
 }
 
 template<typename Message>

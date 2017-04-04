@@ -67,9 +67,9 @@ include_directories(${Qt5Gui_INCLUDE_DIRS})
 ######################################################################
 include_directories(${PROJECT_DIRECTORY}/libs)
 set(MBS_SRCDIR ${PROJECT_DIRECTORY}/src)
-set(mbs_MOC_H ${PROJECT_DIRECTORY}/include/gzwidget.h ${PROJECT_DIRECTORY}/include/mainwindow.h)
+set(mbs_MOC_H ${PROJECT_DIRECTORY}/include/gzwidget.h ${PROJECT_DIRECTORY}/include/mainwindow.h ${PROJECT_DIRECTORY}/include/robotwidget.h)
 qt5_wrap_cpp(mbs_CPP ${mbs_MOC_H})
-set(mbs_SRC ${MBS_SRCDIR}/main.cpp ${MBS_SRCDIR}/gzwidget.cpp ${MBS_SRCDIR}/mainwindow.cpp ${MBS_SRCDIR}/multicastpp.cpp
+set(mbs_SRC ${MBS_SRCDIR}/main.cpp ${MBS_SRCDIR}/gzwidget.cpp ${MBS_SRCDIR}/mainwindow.cpp ${MBS_SRCDIR}/robotwidget.cpp ${MBS_SRCDIR}/multicastpp.cpp
     ${MBS_SRCDIR}/thpool.c)
 add_executable(basestation ${mbs_SRC} ${mbs_CPP}) 
 target_include_directories(basestation PUBLIC

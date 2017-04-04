@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     }
     
     Multicastpp rtdb;
-    window = new MainWindow(official_field,&rtdb);
+    window = new MainWindow(false,&rtdb);
     window->show();
 
     //Setup Thread pool and receving thread

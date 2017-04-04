@@ -6,8 +6,11 @@
 #include <QMainWindow>
 #include "multicastpp.h"
 #include <QCloseEvent>
+#include <QLayout>
+#include <QVBoxLayout>
 #include <QTimer>
 #include <ros/ros.h>
+#include <Utils/types.h>
 #include <minho_team_ros/interAgentInfo.h> // msg_id = 1;
 #include <minho_team_ros/robotInfo.h>
 #include <minho_team_ros/hardwareInfo.h>
@@ -17,6 +20,7 @@
 #include <boost/process.hpp>
 #include <boost/process/child.hpp>
 #include <gzwidget.h>
+#include <robotwidget.h>
 
 using minho_team_ros::interAgentInfo;
 using minho_team_ros::robotInfo;
@@ -42,6 +46,8 @@ public:
     void updateAgentInfo(void *packet);
     /// \brief close event override
     void closeEvent(QCloseEvent *event);
+    /// \brief function to setup graphical stuff in ui
+    void setupGraphicsUI();
 private:
     /// \brief function that reads msg_id parameter in packet and returns true if msg_id = 1 (is interAgentInfo)
     bool isAgentInfoMessage(udp_packet *packet);
@@ -76,12 +82,10 @@ private slots:
     void setup3DVisualPtrs();
     /// \brief slot function to compute and send current baseStationInfo message
     void sendBaseStationUpdate();
-
-
     /// \brief print test function
     void printSlot(QString info) { ROS_INFO("Slot: %s",info.toStdString().c_str()); }
 signals:
-    void newRobotInformationReceived();
+    void newRobotInformationReceived(int agent_id);
 private:
     Ui::MainWindow *ui;
     /// \brief vector that holds most recent info from a robot
@@ -90,6 +94,8 @@ private:
     bool robotState[NROBOTS];
     /// \brief vector to hold number of received packets by a certain agent
     int robotReceivedPackets[NROBOTS];
+    /// \brief vector of pointers to robot widgets
+    robotWidget *robwidgets[NROBOTS];
     /// \brief timer that calls a function to detect if an agent is online or offline
     QTimer *robotStateDetector, *sendDataTimer;
     /// \brief pointer to multicast class, to send info
@@ -110,6 +116,8 @@ private:
     VisualPtr ballVisuals[NROBOTS];
     /// \brief vector to hold visual pointer to basestation ball
     VisualPtr bsBallVisual;
+    /// \brief tells if widgets have been set up
+    bool robwidgetsReady;
 
 };
 
