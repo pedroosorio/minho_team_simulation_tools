@@ -397,7 +397,6 @@ bool Minho_Robot::kickServiceCallback(requestKick::Request &req,requestKick::Res
 {
    //Apply ball kicking
    if(req.kick_strength>0){
-       ROS_INFO("Kick Service called");
        kick_requested_ = true;
        kick_force_ = req.kick_strength;
        kick_dir_ = req.kick_direction;
@@ -507,7 +506,7 @@ void Minho_Robot::publishRobotInfo()
                
         current_state.ball_position.x = ball_pose_.pos.x+error*cos(direction);
         current_state.ball_position.y = ball_pose_.pos.y+error*sin(direction);
-        current_state.ball_position.z = ball_pose_.pos.z+error/2;
+        current_state.ball_position.z = 0.11;
         current_state.sees_ball = true;
     } else current_state.sees_ball = false;             
     // Ball sensor
