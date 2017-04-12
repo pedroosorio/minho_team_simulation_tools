@@ -25,8 +25,9 @@ public:
     ~robotWidget();
     void setRobotId(unsigned int id);
     void setWidgetState(bool active);
-    void updateInformation(hardwareInfo info);
+    void updateInformation(hardwareInfo info,float freq);
     unsigned int getCurrentRole();
+    void updateComsFrequency(float freq);
 private:
 
 private:

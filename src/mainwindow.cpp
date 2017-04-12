@@ -14,11 +14,19 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     for(int i=0;i<NROBOTS;i++) robwidgets[i] = NULL;
     ui->setupUi(this);
     robwidgetsReady = false;
+    refboxConnected = false;
+    refboxSocket = NULL;
     ui->statusBar->showMessage("Loading resources ...");
     setupGraphicsUI();
+    connectToRefBox();
+
+    isCyan = false;
+    on_bt_team_clicked();
 
     mBsInfo.roles.resize(NROBOTS);
     mBsInfo.gamestate = sSTOPPED;
+    mBsInfo.posxside = false;
+    on_bt_side_clicked();
 
     rtdb = coms;
     this->isOfficialField = isOfficialField;
@@ -26,7 +34,7 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     connect(ui->gzwidget,SIGNAL(newFrameRendered()),this,SLOT(setup3DVisualPtrs()));
     ui->gzwidget->init("mtbasestation");
     ui->gzwidget->setGrid(false);
-    ui->gzwidget->setAllControlsMode(true);
+    ui->gzwidget->setAllControlsMode(false);
 
     bsBallVisual = NULL;
     mBsInfo.agent_id = 6;
@@ -34,6 +42,7 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     for(int i=0;i<NROBOTS;i++) {
         robotState[i] = false; robotReceivedPackets[i]=0;
         robotVisuals[i] = ballVisuals[i] = NULL;
+        recvFreqs[i] = 0;
     }
 
     robotStateDetector = new QTimer();
@@ -41,6 +50,7 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     connect(robotStateDetector,SIGNAL(timeout()),this,SLOT(detectRobotsState()));
     connect(sendDataTimer,SIGNAL(timeout()),this,SLOT(sendBaseStationUpdate()));
     robotStateDetector->start(300);
+    on_comboBox_activated(0);
 
     // Signal test
     connect(ui->gzwidget,SIGNAL(modelClicked(QString)),this,SLOT(printSlot(QString)));
@@ -96,6 +106,9 @@ void MainWindow::setupGraphicsUI()
     robwidgets[4] = ui->r5widget;
 
     robwidgetsReady = true;
+    ui->lb_refstate->setText("RefBox ●");
+    ui->lb_refstate->setStyleSheet("color:red;");
+    ui->lb_refstate->setFont(ui->bt_team->font());
 }
 
 void MainWindow::updateAgentInfo(void *packet)
@@ -109,7 +122,8 @@ void MainWindow::updateAgentInfo(void *packet)
 
     if(agent_data.agent_id<1 || agent_data.agent_id>(NROBOTS));
     else {
-      if(robwidgets[agent_data.agent_id-1])robwidgets[agent_data.agent_id-1]->updateInformation(agent_data.hardware_info);
+      recvFreqs[agent_data.agent_id-1] = 1000.0/(float)data_timers[agent_data.agent_id-1].elapsed();
+      data_timers[agent_data.agent_id-1].start();
       robots[agent_data.agent_id-1] = agent_data;
       robotReceivedPackets[agent_data.agent_id-1]++;
       emit newRobotInformationReceived(agent_data.agent_id);
@@ -134,9 +148,12 @@ void MainWindow::sendBaseStationUpdate()
     updateGraphics();
     ui->statusBar->showMessage("Ξ Rendering at "+QString::number(ui->gzwidget->getAverageFPS())+" fps");
     // Update Roles from robot widgets
-    for(unsigned int rob=0;rob<NROBOTS;rob++) mBsInfo.roles[rob] = robwidgets[rob]->getCurrentRole();
+    for(unsigned int rob=0;rob<NROBOTS;rob++) {
+        mBsInfo.roles[rob] = robwidgets[rob]->getCurrentRole();
+        if(robotState[rob] && robwidgets[rob]) robwidgets[rob]->updateInformation(robots[rob].hardware_info,recvFreqs[rob]);
+    }
     // Send information to Robots
-    //sendInfoOverMulticast();
+    sendInfoOverMulticast();
 }
 
 void MainWindow::sendInfoOverMulticast()
@@ -221,6 +238,7 @@ void MainWindow::updateGraphics()
             // hide stuff from robot i
             setVisibilityRobotGraphics(i,false);
             mBsInfo.roles[i] = rSTOP;
+            data_timers[i].restart();
         }
     }
 
@@ -250,6 +268,51 @@ void MainWindow::setBallPosition(int ball_id, float x, float y, float z)
     std::string modelName = bsballname;
     if(ball_id>0) modelName = ballprefix+std::to_string(ball_id);
     ui->gzwidget->setModelPoseInWorld(modelName,Vector3d(x,y,z));
+}
+
+bool MainWindow::connectToRefBox()
+{
+    if(refboxSocket) {
+        refboxSocket->close();
+        refboxSocket->abort();
+        delete refboxSocket;
+    }
+
+    refboxSocket = new QTcpSocket();
+    QString refboxIP = "127.0.0.1";
+    // red iptable.cfg from common
+    std::string ipFilePath = getenv("HOME");
+    std::string line = "";
+    ipFilePath += "/Common/iptable.cfg";
+    std::ifstream file; file.open(ipFilePath);
+    if(file.is_open()){
+        while (getline(file,line)){
+            if(line.size()>0 && line[0]!='#'){
+                if(line.find("RB")!=std::string::npos){
+                    refboxIP = QString::fromStdString(line.substr(0,line.find(" ")));
+                    ROS_INFO("Found Refbox IP config at iptable.cfg - %s",refboxIP.toStdString().c_str());
+                }
+            }
+        }
+        file.close();
+    } else ROS_ERROR("Failed to read iptable.cfg");
+    ui->lb_refstate->setText(QString("RefBox [")+refboxIP+QString("] ●"));
+    ui->lb_refstate->setFont(ui->bt_team->font());
+    if(refboxIP=="127.0.0.1") ROS_INFO("Setting RefBox IP as localhost.");
+
+    int enableKeepAlive = 1;
+    int fd = refboxSocket->socketDescriptor();
+    setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enableKeepAlive, sizeof(enableKeepAlive));
+    int maxIdle = 5; /* seconds */
+    setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &maxIdle, sizeof(maxIdle));
+    int count = 3;  // send up to 3 keepalive packets out, then disconnect if no response
+    setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
+    int interval = 2;   // send a keepalive packet out every 2 seconds (after the 5 second idle period)
+    setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+
+    refboxSocket->connectToHost(QHostAddress(refboxIP),28097);
+    connect(refboxSocket,SIGNAL(readyRead()),this,SLOT(onRefBoxData()));
+    connect(refboxSocket,SIGNAL(disconnected()),this,SLOT(onRefBoxDisconnection()));
 }
 
 void MainWindow::detectRobotsState()
@@ -284,10 +347,9 @@ void MainWindow::setup3DVisualPtrs()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     ui->gzwidget->close();
-    ROS_INFO("Terminating process %d",run_gz->get_id());
-    run_gz->terminate();
+    system("pkill -f \"gzserver bs_\" ");
     int status = 0;
-    waitpid(run_gz->get_id(), &status, WNOHANG);
+    if(run_gz)waitpid(run_gz->get_id(), &status, WNOHANG);
     event->accept();
 }
 
@@ -307,4 +369,85 @@ void MainWindow::serializeROSMessage(Message *msg, uint8_t **packet, uint32_t *p
     ros::serialization::OStream stream( serialization_buffer.get(), serial_size );
     ros::serialization::serialize( stream, *msg);
     (*packet) = serialization_buffer.get();
+}
+
+void MainWindow::on_bt_team_clicked()
+{
+    isCyan = !isCyan;
+    QPalette pal = ui->bt_team->palette();
+    if(isCyan){ pal.setColor(QPalette::Button,QColor(Qt::cyan)); ui->bt_team->setText("Team CYAN"); }
+    else { pal.setColor(QPalette::Button,QColor(Qt::magenta)); ui->bt_team->setText("Team MAGENTA"); }
+    ui->bt_team->setPalette(pal);
+}
+
+void MainWindow::on_bt_side_clicked()
+{
+    mBsInfo.posxside = !mBsInfo.posxside;
+    QPalette pal = ui->bt_side->palette();
+    if(mBsInfo.posxside){ pal.setColor(QPalette::Button,QColor(Qt::yellow)); ui->bt_side->setText("Right Side"); }
+    else { pal.setColor(QPalette::Button,QColor(Qt::red)); ui->bt_side->setText("Left Side"); }
+    ui->bt_side->setPalette(pal);
+}
+
+void MainWindow::on_bt_conref_clicked()
+{
+    connectToRefBox();
+}
+
+void MainWindow::onRefBoxData()
+{
+    QString command = refboxSocket->readAll();
+
+    if(command == "S"){ // stop,end part or end half
+        mBsInfo.gamestate = sSTOPPED;
+    } else if(command == "W"){ // on connection with refbox
+        refboxConnected = true;
+        ui->lb_refstate->setStyleSheet("color:green;");
+        ui->lb_refstate->setFont(ui->bt_team->font());
+    }else if(command == "e" || command == "h"){ // end part or end half
+        mBsInfo.gamestate = sSTOPPED;
+        if(command=="h") on_bt_side_clicked();
+    } else if(command == "L"){ // parking
+        mBsInfo.gamestate = sPARKING;
+        if(command=="h") on_bt_side_clicked();
+    } else if(command == "s" || command == "1s" || command == "2s"){ //start
+        mBsInfo.gamestate++;
+    } else if(command == "K" || command == "k"){ // kickoff
+        if(isCyan && command[0].isUpper()) mBsInfo.gamestate = sPRE_OWN_KICKOFF;
+        else if(!isCyan && command[0].isLower()) mBsInfo.gamestate = sPRE_OWN_KICKOFF;
+        else mBsInfo.gamestate = sPRE_THEIR_KICKOFF;
+    } else if(command == "F" || command == "f"){ // freekick
+        if(isCyan && command[0].isUpper()) mBsInfo.gamestate = sPRE_OWN_FREEKICK;
+        else if(!isCyan && command[0].isLower()) mBsInfo.gamestate = sPRE_OWN_FREEKICK;
+        else mBsInfo.gamestate = sPRE_THEIR_FREEKICK;
+    } else mBsInfo.gamestate = sSTOPPED;
+}
+
+void MainWindow::onRefBoxDisconnection()
+{
+    mBsInfo.gamestate = sSTOPPED;
+    ui->lb_refstate->setStyleSheet("color:red;");
+    ui->lb_refstate->setFont(ui->bt_team->font());
+}
+
+void MainWindow::on_comboBox_activated(int index)
+{
+    switch(index){
+        case 0:{
+            if(isOfficialField) setCameraPose(0.0,-22,12,0,0.55,1.58);
+            break;
+        }
+        case 1:{
+            if(isOfficialField) setCameraPose(18.5,-19,10,0,0.41,2.27);
+            break;
+        }
+        case 2:{
+            if(isOfficialField) setCameraPose(-17,-19.5,10,0,0.41,0.9);
+            break;
+        }
+        case 3:{
+            if(isOfficialField) setCameraPose(0.0,0.0,33,0,1.57,1.57);
+            break;
+        }
+    }
 }

@@ -217,6 +217,9 @@ void GzWidget::paintEvent(QPaintEvent *event)
             i=0;
             emit newIndicatorUpdate();
             if(scene_ready && scene && camera->Initialized()) {scene->ShowOrigin(false); scene->SetGrid(showGrid);}
+            /*Pose3d camPose = camera->WorldPose();
+            printf("%.2f %.2f %.2f | %.2f %.2f %.2f\n",camPose.Pos().X(),camPose.Pos().Y(), camPose.Pos().Z(),
+                   camPose.Rot().Roll(), camPose.Rot().Pitch(), camPose.Rot().Yaw());*/
         }i++;
     } else event::Events::preRender();
     this->update();
@@ -640,5 +643,7 @@ void GzWidget::moveToFirstPerson()
 
 void GzWidget::setCameraPose(Vector3d pos, Vector3d rot)
 {
-
+    math::Pose camPose;
+    camPose.Set(pos,rot);
+    camera->SetWorldPose(camPose);
 }

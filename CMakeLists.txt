@@ -52,16 +52,17 @@ include_directories(/usr/include/sdformat-4.0)
 
 #Linking steps for Qt Libraries
 ########################################
-find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Gui Network REQUIRED)
 add_definitions (${QT_DEFINITIONS})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
-set(qt_LIBRARIES Qt5::Widgets Qt5::Core Qt5::Gui)
+set(qt_LIBRARIES Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Network)
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
 include_directories(${Qt5Core_INCLUDE_DIRS})
 include_directories(${Qt5Gui_INCLUDE_DIRS})
+include_directories(${Qt5Network_INCLUDE_DIRS})
 ########################################
 
 ######################################################################

@@ -4,8 +4,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTime>
 #include "multicastpp.h"
 #include <QCloseEvent>
+#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QHostAddress>
 #include <QLayout>
 #include <QVBoxLayout>
 #include <QTimer>
@@ -75,6 +78,8 @@ private:
     void setRobotPose(int robot_id, float x,float y,float z);
     /// \brief sets ball position (x,y,z) (0 for bs ball, 1,2,3,4,5 for robot's ball)
     void setBallPosition(int ball_id, float x, float y,float z);
+    /// \brief function to connect via TCP socket to refbox
+    bool connectToRefBox();
 private slots:
     /// \brief function that detects if a robot is online or offline based on received packets
     void detectRobotsState();
@@ -84,6 +89,19 @@ private slots:
     void sendBaseStationUpdate();
     /// \brief print test function
     void printSlot(QString info) { ROS_INFO("Slot: %s",info.toStdString().c_str()); }
+    /// \brief slot for changing team color
+    void on_bt_team_clicked();
+    /// \brief slot for changing playing side
+    void on_bt_side_clicked();
+    /// \brief button to reconnect to refbox
+    void on_bt_conref_clicked();
+    /// \brief slot for received data from refbox
+    void onRefBoxData();
+    /// \brief slot on disconnection of refbox socket
+    void onRefBoxDisconnection();
+    /// \brief slot to change visualization camera
+    void on_comboBox_activated(int index);
+
 signals:
     void newRobotInformationReceived(int agent_id);
 private:
@@ -118,7 +136,14 @@ private:
     VisualPtr bsBallVisual;
     /// \brief tells if widgets have been set up
     bool robwidgetsReady;
-
+    /// \brief variables to compute receive frequency of robot data
+    QTime data_timers[NROBOTS]; float recvFreqs[NROBOTS];
+    /// \brief holds team color
+    bool isCyan;
+    /// \brief socket to interface with refbox
+    QTcpSocket *refboxSocket;
+    /// \brief holds if refbox is connected or not
+    bool refboxConnected;
 };
 
 #endif // MAINWINDOW_H
