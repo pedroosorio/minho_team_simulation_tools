@@ -28,11 +28,19 @@ public:
     void updateInformation(hardwareInfo info,float freq);
     unsigned int getCurrentRole();
     void updateComsFrequency(float freq);
-private:
+signals:
+    void relocRequested(int id);
+    void resetIMURequested(int id);
+
+private slots:
+    void on_bt_reloc_clicked();
+
+    void on_bt_resetimu_clicked();
 
 private:
     Ui::robotWidget *ui;
     QPixmap online, offline;
+    int agent_id;
 };
 
 #endif // ROBOTWIDGET_H

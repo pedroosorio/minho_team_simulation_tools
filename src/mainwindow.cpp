@@ -24,6 +24,7 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     on_bt_team_clicked();
 
     mBsInfo.roles.resize(NROBOTS);
+    mBsInfo.requests.resize(NROBOTS);
     mBsInfo.gamestate = sSTOPPED;
     mBsInfo.posxside = false;
     on_bt_side_clicked();
@@ -47,14 +48,11 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
 
     robotStateDetector = new QTimer();
     sendDataTimer = new QTimer();
+    jsonLogger = new cPacketRefboxLogger();
     connect(robotStateDetector,SIGNAL(timeout()),this,SLOT(detectRobotsState()));
     connect(sendDataTimer,SIGNAL(timeout()),this,SLOT(sendBaseStationUpdate()));
     robotStateDetector->start(300);
     on_comboBox_activated(0);
-
-    // Signal test
-    connect(ui->gzwidget,SIGNAL(modelClicked(QString)),this,SLOT(printSlot(QString)));
-    connect(ui->gzwidget,SIGNAL(modelReleased(QString)),this,SLOT(printSlot(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -108,7 +106,18 @@ void MainWindow::setupGraphicsUI()
     robwidgetsReady = true;
     ui->lb_refstate->setText("RefBox ●");
     ui->lb_refstate->setStyleSheet("color:red;");
-    ui->lb_refstate->setFont(ui->bt_team->font());
+    ui->lb_refstate->setFont(ui->bt_team->font());// connect reloc and reset signals
+
+    connect(ui->r1widget,SIGNAL(relocRequested(int)),this,SLOT(onRelocRequest(int)));
+    connect(ui->r1widget,SIGNAL(resetIMURequested(int)),this,SLOT(onResetIMURequest(int)));
+    connect(ui->r2widget,SIGNAL(relocRequested(int)),this,SLOT(onRelocRequest(int)));
+    connect(ui->r2widget,SIGNAL(resetIMURequested(int)),this,SLOT(onResetIMURequest(int)));
+    connect(ui->r3widget,SIGNAL(relocRequested(int)),this,SLOT(onRelocRequest(int)));
+    connect(ui->r3widget,SIGNAL(resetIMURequested(int)),this,SLOT(onResetIMURequest(int)));
+    connect(ui->r4widget,SIGNAL(relocRequested(int)),this,SLOT(onRelocRequest(int)));
+    connect(ui->r4widget,SIGNAL(resetIMURequested(int)),this,SLOT(onResetIMURequest(int)));
+    connect(ui->r5widget,SIGNAL(relocRequested(int)),this,SLOT(onRelocRequest(int)));
+    connect(ui->r5widget,SIGNAL(resetIMURequested(int)),this,SLOT(onResetIMURequest(int)));
 }
 
 void MainWindow::updateAgentInfo(void *packet)
@@ -166,6 +175,8 @@ void MainWindow::sendInfoOverMulticast()
     if (sentbytes != packet_size){
         ROS_ERROR("Failed to send a packet.");
     }
+
+    for(int i=0;i<NROBOTS;i++) mBsInfo.requests[i] = 0;
 }
 
 void MainWindow::initGazeboBaseStationWorld()
@@ -397,7 +408,7 @@ void MainWindow::on_bt_conref_clicked()
 void MainWindow::onRefBoxData()
 {
     QString command = refboxSocket->readAll();
-
+    ROS_INFO("Received %s",command.toStdString().c_str());
     if(command == "S"){ // stop,end part or end half
         mBsInfo.gamestate = sSTOPPED;
     } else if(command == "W"){ // on connection with refbox
@@ -450,4 +461,14 @@ void MainWindow::on_comboBox_activated(int index)
             break;
         }
     }
+}
+
+void MainWindow::onRelocRequest(int id)
+{
+    mBsInfo.requests[id-1] = 1;
+}
+
+void MainWindow::onResetIMURequest(int id)
+{
+    mBsInfo.requests[id-1] = 2;
 }

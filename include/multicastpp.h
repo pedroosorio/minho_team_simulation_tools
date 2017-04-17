@@ -1,7 +1,7 @@
 #ifndef MULTICAST_H
 #define MULTICAST_H
 
-#define MULTICAST_IP	"224.16.32.111"
+#define MULTICAST_IP	"224.16.32.49"
 #define MULTICAST_PORT	64646
 #define TTL				64
 #include <iostream>

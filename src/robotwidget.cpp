@@ -21,6 +21,7 @@ void robotWidget::setRobotId(unsigned int id)
 {
     if(id<0||id>=6) return;
     else ui->lb_rname->setText("● Robot "+QString::number(id));
+    agent_id = id;
 }
 
 void robotWidget::setWidgetState(bool active)
@@ -50,4 +51,14 @@ unsigned int robotWidget::getCurrentRole()
 void robotWidget::updateComsFrequency(float freq)
 {
     ui->lb_comfreq->setText(QString::number(freq,'f',2)+" Hz");
+}
+
+void robotWidget::on_bt_reloc_clicked()
+{
+    emit relocRequested(agent_id);
+}
+
+void robotWidget::on_bt_resetimu_clicked()
+{
+    emit resetIMURequested(agent_id);
 }

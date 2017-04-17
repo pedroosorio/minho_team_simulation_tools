@@ -24,6 +24,7 @@
 #include <boost/process/child.hpp>
 #include <gzwidget.h>
 #include <robotwidget.h>
+#include <FalconsJSON/cPacketRefboxLogger.hpp>
 
 using minho_team_ros::interAgentInfo;
 using minho_team_ros::robotInfo;
@@ -101,7 +102,10 @@ private slots:
     void onRefBoxDisconnection();
     /// \brief slot to change visualization camera
     void on_comboBox_activated(int index);
-
+    /// \brief slot to set data for requesting a reloc
+    void onRelocRequest(int id);
+    ///  \brief slot to set data for requesting a IMU reset
+    void onResetIMURequest(int id);
 signals:
     void newRobotInformationReceived(int agent_id);
 private:
@@ -141,9 +145,11 @@ private:
     /// \brief holds team color
     bool isCyan;
     /// \brief socket to interface with refbox
-    QTcpSocket *refboxSocket;
+    QTcpSocket *refboxSocket, *loggerSocket;
     /// \brief holds if refbox is connected or not
     bool refboxConnected;
+    /// \brief refbox worldstate logger object
+    cPacketRefboxLogger *jsonLogger;
 };
 
 #endif // MAINWINDOW_H
