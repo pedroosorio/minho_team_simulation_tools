@@ -9,12 +9,12 @@ set(CMAKE_BUILD_TYPE Debug)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-	roscpp
-	std_msgs
-	message_generation	
-	sensor_msgs
-	genmsg	
-	minho_team_ros		
+    roscpp
+    std_msgs
+    message_generation
+    sensor_msgs
+    genmsg
+    minho_team_ros
 )
 
 ###################################
@@ -26,8 +26,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-	catkin_package(
-		#  INCLUDE_DIRS include
+    catkin_package(
+        #  INCLUDE_DIRS include
 		#  LIBRARIES minho_team
 		CATKIN_DEPENDS message_runtime std_msgs sensor_msgs
 		DEPENDS sensor_msgs
@@ -67,18 +67,20 @@ include_directories(${Qt5Network_INCLUDE_DIRS})
 
 ######################################################################
 include_directories(${PROJECT_DIRECTORY}/libs)
+include_directories(/usr/local/include)
 set(MBS_SRCDIR ${PROJECT_DIRECTORY}/src)
 set(mbs_MOC_H ${PROJECT_DIRECTORY}/include/gzwidget.h ${PROJECT_DIRECTORY}/include/mainwindow.h ${PROJECT_DIRECTORY}/include/robotwidget.h)
 qt5_wrap_cpp(mbs_CPP ${mbs_MOC_H})
 set(mbs_SRC ${MBS_SRCDIR}/main.cpp ${MBS_SRCDIR}/gzwidget.cpp ${MBS_SRCDIR}/mainwindow.cpp ${MBS_SRCDIR}/robotwidget.cpp ${MBS_SRCDIR}/multicastpp.cpp
     ${MBS_SRCDIR}/thpool.c)
-add_executable(basestation ${mbs_SRC} ${mbs_CPP}) 
+set(libs_SRC ${PROJECT_DIRECTORY}/libs/FalconsJSON/cPacketRefboxLogger.cpp)
+add_executable(basestation ${mbs_SRC} ${mbs_CPP} ${libs_SRC})
 target_include_directories(basestation PUBLIC
 $<BUILD_INTERFACE:${PROJECT_DIRECTORY}/include>)
 
 set_target_properties(basestation PROPERTIES COMPILE_FLAGS "-fPIC")
 target_compile_features(basestation PRIVATE cxx_range_for)
-target_link_libraries(basestation ${IGNITION-MATH_LIBRARIES} ${catkin_LIBRARIES} ${qt_LIBRARIES} ${GAZEBO_LIBRARIES})
+target_link_libraries(basestation ${IGNITION-MATH_LIBRARIES} ${catkin_LIBRARIES} ${qt_LIBRARIES} ${GAZEBO_LIBRARIES} /usr/local/lib/libjson-c.so)
 add_dependencies(basestation minho_team_ros_generate_messages_cpp)
 ######################################################################
 

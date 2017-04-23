@@ -7,10 +7,12 @@
 #include <QLabel>
 #include <QString>
 #include <minho_team_ros/hardwareInfo.h>
+#include <minho_team_ros/aiInfo.h>
 #include <QPixmap>
 #include <QPainter>
 
 using minho_team_ros::hardwareInfo;
+using minho_team_ros::aiInfo;
 
 namespace Ui {
 class robotWidget;
@@ -25,7 +27,7 @@ public:
     ~robotWidget();
     void setRobotId(unsigned int id);
     void setWidgetState(bool active);
-    void updateInformation(hardwareInfo info,float freq);
+    void updateInformation(aiInfo ai, hardwareInfo info,float freq);
     unsigned int getCurrentRole();
     void updateComsFrequency(float freq);
 signals:

@@ -13,13 +13,11 @@ using std::exception;
 using std::runtime_error;
 using std::string;
 
-using namespace packetRefboxLogger;
-
-cPacketRefboxLogger::cPacketRefboxLogger()
+cPacketRefboxLogger::cPacketRefboxLogger(std::string team_name)
 {
 	_jsonObject = NULL;
 	_mPacket.type = string("worldstate");
-	_mPacket.teamName = string();
+    _mPacket.teamName = team_name;
 	_mPacket.globalIntention = string();
 	_mPacket.robots.clear();
 	_mPacket.balls.clear();
@@ -64,7 +62,7 @@ void cPacketRefboxLogger::setTeamIntention(const string intention)
 /*
  * Robot level setters
  */
-void cPacketRefboxLogger::setRobotPose(const uint8_t robotId, const Position2D pose)
+void cPacketRefboxLogger::setRobotPose(const uint8_t robotId, const minho_team_ros::pose pose)
 {
 	size_t index = 0;
 	bool isFound = false;
@@ -86,7 +84,7 @@ void cPacketRefboxLogger::setRobotPose(const uint8_t robotId, const Position2D p
 	}
 }
 
-void cPacketRefboxLogger::setRobotTargetPose(const uint8_t robotId, const Position2D targetPose)
+void cPacketRefboxLogger::setRobotTargetPose(const uint8_t robotId, const minho_team_ros::pose targetPose)
 {
 	size_t index = 0;
 	bool isFound = false;
@@ -108,7 +106,7 @@ void cPacketRefboxLogger::setRobotTargetPose(const uint8_t robotId, const Positi
 	}
 }
 
-void cPacketRefboxLogger::setRobotVelocity(const uint8_t robotId, const Position2D velocity)
+void cPacketRefboxLogger::setRobotVelocity(const uint8_t robotId, const minho_team_ros::velocity velocity)
 {
 	size_t index = 0;
 	bool isFound = false;
@@ -199,7 +197,7 @@ void cPacketRefboxLogger::setRobotBallPossession(const uint8_t robotId, const bo
 /*
  * Ball setters
  */
-void cPacketRefboxLogger::addBall(const Vector3D position, const Vector3D velocity, const float confidence)
+void cPacketRefboxLogger::addBall(const minho_team_ros::pose position, const minho_team_ros::velocity velocity, const float confidence)
 {
 	ballStructure ball;
 
@@ -213,7 +211,7 @@ void cPacketRefboxLogger::addBall(const Vector3D position, const Vector3D veloci
 /*
  * Obstacle setters
  */
-void cPacketRefboxLogger::addObstacle(const Vector2D position, const Vector2D velocity, const float confidence)
+void cPacketRefboxLogger::addObstacle(const minho_team_ros::position position, const minho_team_ros::velocity velocity, const float confidence)
 {
 	obstacleStructure obstacle;
 
@@ -265,9 +263,11 @@ void cPacketRefboxLogger::addRobot(const uint8_t robotId)
 	try
 	{
 		robot.robotId = robotId;
-		robot.pose = Position2D();
-		robot.velocity = Position2D();
-		robot.targetPose = Position2D();
+        minho_team_ros::pose rpose, rtarget;
+        minho_team_ros::velocity rvel;
+        robot.pose = rpose;
+        robot.velocity = rvel;
+        robot.targetPose = rtarget;
 		robot.intention = string();
 		robot.batteryLevel = 0.0;
 		robot.hasBall = false;
@@ -376,6 +376,10 @@ void cPacketRefboxLogger::generateJSON()
 		json_object *obstacles = json_object_new_array();
 		addObstaclesJSON(obstacles);
 		json_object_object_add(_jsonObject, "obstacles", obstacles);
+
+        /* Add type string */
+        json_object *ageMs = json_object_new_int64(_mPacket.age);
+        json_object_object_add(_jsonObject, "ageMs", ageMs);
 	}
 	catch(exception &e)
 	{
@@ -401,7 +405,7 @@ void cPacketRefboxLogger::addRobotsJSON(json_object *obj)
 			json_object *pose = json_object_new_array();
 			json_object *poseX = json_object_new_double(robotIter->pose.x);
 			json_object *poseY = json_object_new_double(robotIter->pose.y);
-			json_object *posePhi = json_object_new_double(robotIter->pose.phi);
+			json_object *posePhi = json_object_new_double(robotIter->pose.z);
 			json_object_array_add(pose,poseX);
 			json_object_array_add(pose,poseY);
 			json_object_array_add(pose,posePhi);
@@ -411,7 +415,7 @@ void cPacketRefboxLogger::addRobotsJSON(json_object *obj)
 			json_object *targetPose = json_object_new_array();
 			json_object *targetPoseX = json_object_new_double(robotIter->targetPose.x);
 			json_object *targetPoseY = json_object_new_double(robotIter->targetPose.y);
-			json_object *targetPosePhi = json_object_new_double(robotIter->targetPose.phi);
+			json_object *targetPosePhi = json_object_new_double(robotIter->targetPose.z);
 			json_object_array_add(targetPose,targetPoseX);
 			json_object_array_add(targetPose,targetPoseY);
 			json_object_array_add(targetPose,targetPosePhi);
@@ -421,7 +425,7 @@ void cPacketRefboxLogger::addRobotsJSON(json_object *obj)
 			json_object *velocity = json_object_new_array();
 			json_object *velocityX = json_object_new_double(robotIter->velocity.x);
 			json_object *velocityY = json_object_new_double(robotIter->velocity.y);
-			json_object *velocityPhi = json_object_new_double(robotIter->velocity.phi);
+			json_object *velocityPhi = json_object_new_double(robotIter->velocity.z);
 			json_object_array_add(velocity,velocityX);
 			json_object_array_add(velocity,velocityY);
 			json_object_array_add(velocity,velocityPhi);
@@ -535,4 +539,20 @@ void cPacketRefboxLogger::addObstaclesJSON(json_object *obj)
 	{
 		throw e;
 	}
+}
+
+void cPacketRefboxLogger::cleanBallsAndObstacles()
+{
+    _mPacket.balls.clear();
+    _mPacket.obstacles.clear();
+}
+
+void cPacketRefboxLogger::updateRobotInformation(minho_team_ros::interAgentInfo info)
+{
+    setRobotPose(info.agent_id,info.agent_info.robot_info.robot_pose);
+    setRobotBallPossession(info.agent_id,info.agent_info.robot_info.has_ball);
+    setRobotBatteryLevel(info.agent_id,info.hardware_info.battery_main);
+    setRobotVelocity(info.agent_id,info.agent_info.robot_info.robot_velocity);
+    setRobotTargetPose(info.agent_id,info.ai_info.target_pose);
+    setRobotIntention(info.agent_id, "Stop");
 }

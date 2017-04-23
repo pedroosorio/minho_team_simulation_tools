@@ -12,51 +12,55 @@
 #include <stdint.h>
 #include <vector>
 
-#include "position2d.hpp"
-#include "vector2d.hpp"
-#include "vector3d.hpp"
+//#include "position2d.hpp"
+//#include "vector2d.hpp"
+//#include "vector3d.hpp"
+#include "minho_team_ros/position.h"
+#include "minho_team_ros/pose.h"
+#include "minho_team_ros/velocity.h"
 
-namespace packetRefboxLogger
+using minho_team_ros::pose;
+using minho_team_ros::position;
+using minho_team_ros::velocity;
+
+typedef struct
 {
-    typedef struct
-    {
-    	uint8_t     robotId;
-		Position2D  pose;
-		Position2D  velocity;
-		Position2D  targetPose;
-		std::string intention;
-		float       batteryLevel;
-		bool        hasBall;
-    } robotStructure;
-    typedef std::vector<robotStructure> robotList;
+    uint8_t     robotId;
+    minho_team_ros::pose  pose;
+    minho_team_ros::velocity  velocity;
+    minho_team_ros::pose  targetPose;
+    std::string intention;
+    float       batteryLevel;
+    bool        hasBall;
+} robotStructure;
+typedef std::vector<robotStructure> robotList;
 
-    typedef struct
-    {
-    	Vector3D position;
-    	Vector3D velocity;
-        float    confidence;
-    } ballStructure;
-    typedef std::vector<ballStructure> ballList;
+typedef struct
+{
+    minho_team_ros::pose position;
+    minho_team_ros::velocity velocity;
+    float    confidence;
+} ballStructure;
+typedef std::vector<ballStructure> ballList;
 
-    typedef struct
-    {
-    	Vector2D position;
-    	Vector2D velocity;
-    	float    radius;
-    	float    confidence;
-    } obstacleStructure;
-    typedef std::vector<obstacleStructure> obstacleList;
+typedef struct
+{
+    minho_team_ros::position position;
+    minho_team_ros::velocity velocity;
+    float    radius;
+    float    confidence;
+} obstacleStructure;
+typedef std::vector<obstacleStructure> obstacleList;
 
-    typedef struct
-    {
-    	std::string type;
-    	std::string teamName;
-    	std::string globalIntention;
-    	robotList robots;
-    	ballList balls;
-    	obstacleList obstacles;
-    	size_t age;
-    } packetStructureDeserialized;
-}
+typedef struct
+{
+    std::string type;
+    std::string teamName;
+    std::string globalIntention;
+    robotList robots;
+    ballList balls;
+    obstacleList obstacles;
+    size_t age;
+} packetStructureDeserialized;
 
 #endif /* PACKETSTRUCTUREREFBOXLOGGER_HPP_ */

@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>150</width>
-    <height>230</height>
+    <width>188</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>150</width>
-    <height>230</height>
+    <width>188</width>
+    <height>298</height>
    </size>
   </property>
   <property name="palette">
@@ -437,7 +437,7 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="12" column="0">
+     <item row="14" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QLabel" name="label_5">
@@ -545,7 +545,7 @@
        </item>
       </layout>
      </item>
-     <item row="9" column="0">
+     <item row="11" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QLabel" name="label_6">
@@ -593,16 +593,6 @@
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="7" column="0">
-      <widget class="Line" name="line_2">
-       <property name="lineWidth">
-        <number>5</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
      </item>
      <item row="6" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -653,7 +643,7 @@
        </item>
       </layout>
      </item>
-     <item row="10" column="0">
+     <item row="12" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="label_4">
@@ -702,7 +692,7 @@
        </item>
       </layout>
      </item>
-     <item row="13" column="0">
+     <item row="15" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QLabel" name="label_7">
@@ -751,17 +741,7 @@
        </item>
       </layout>
      </item>
-     <item row="11" column="0">
-      <widget class="Line" name="line_3">
-       <property name="lineWidth">
-        <number>5</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="14" column="0">
+     <item row="16" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_8">
        <item>
         <widget class="QLabel" name="label_8">
@@ -810,7 +790,7 @@
        </item>
       </layout>
      </item>
-     <item row="8" column="0">
+     <item row="10" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="label">
@@ -858,16 +838,6 @@
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="5" column="0">
-      <widget class="Line" name="line">
-       <property name="lineWidth">
-        <number>5</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
      </item>
      <item row="4" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -918,6 +888,118 @@
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="13" column="0">
+      <widget class="Line" name="line_3">
+       <property name="lineWidth">
+        <number>5</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="Line" name="line_2">
+       <property name="lineWidth">
+        <number>5</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Ubuntu</family>
+           <pointsize>7</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Action</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lb_action">
+         <property name="font">
+          <font>
+           <family>Ubuntu</family>
+           <pointsize>8</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>aSTOP</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="5" column="0">
+      <widget class="Line" name="line">
+       <property name="lineWidth">
+        <number>5</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_13">
+       <item>
+        <widget class="QLabel" name="label_10">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Ubuntu</family>
+           <pointsize>7</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Target Pose</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lb_tpose">
+         <property name="font">
+          <font>
+           <family>Ubuntu</family>
+           <pointsize>8</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>[ 0 , 0 , 0 ]</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>

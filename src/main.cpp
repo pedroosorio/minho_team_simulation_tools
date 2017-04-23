@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     bool official_field = true;
     // look for parameter -l (lar field) or -o (official field). on error, defaults to -o
 
-    if(argc!=2) ROS_ERROR("Wrong parameters, defaulting to Official field. Specify -l for Lar field or -o for Official field.");
+    if(argc!=2) ROS_ERROR("Wrong number [%d] of parameters, defaulting to Official field. Specify -l for Lar field or -o for Official field.",argc);
     else {
       if(!strcmp(argv[1],"-l") || !strcmp(argv[1],"-L")){
          official_field = false;   
@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
     }
     
     Multicastpp rtdb;
-    official_field = false;
     window = new MainWindow(official_field,&rtdb);
     window->show();
 

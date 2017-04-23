@@ -88,6 +88,8 @@ private slots:
     void setup3DVisualPtrs();
     /// \brief slot function to compute and send current baseStationInfo message
     void sendBaseStationUpdate();
+    /// \brief function to generate and send JSON log for refbox visualizer
+    void sendJSONWorldState();
     /// \brief print test function
     void printSlot(QString info) { ROS_INFO("Slot: %s",info.toStdString().c_str()); }
     /// \brief slot for changing team color

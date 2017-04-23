@@ -36,19 +36,23 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     ui->gzwidget->init("mtbasestation");
     ui->gzwidget->setGrid(false);
     ui->gzwidget->setAllControlsMode(false);
-
+    jsonLogger = new cPacketRefboxLogger("MinhoTeam");
+    jsonLogger->setTeamIntention("Stop");
+    jsonLogger->setAgeMilliseconds(30);
     bsBallVisual = NULL;
     mBsInfo.agent_id = 6;
     run_gz = NULL;
+
     for(int i=0;i<NROBOTS;i++) {
         robotState[i] = false; robotReceivedPackets[i]=0;
         robotVisuals[i] = ballVisuals[i] = NULL;
         recvFreqs[i] = 0;
+        robots[i].agent_id = i+1;
+        jsonLogger->updateRobotInformation(robots[i]);
     }
 
     robotStateDetector = new QTimer();
     sendDataTimer = new QTimer();
-    jsonLogger = new cPacketRefboxLogger();
     connect(robotStateDetector,SIGNAL(timeout()),this,SLOT(detectRobotsState()));
     connect(sendDataTimer,SIGNAL(timeout()),this,SLOT(sendBaseStationUpdate()));
     robotStateDetector->start(300);
@@ -135,6 +139,7 @@ void MainWindow::updateAgentInfo(void *packet)
       data_timers[agent_data.agent_id-1].start();
       robots[agent_data.agent_id-1] = agent_data;
       robotReceivedPackets[agent_data.agent_id-1]++;
+      jsonLogger->updateRobotInformation(agent_data);
       emit newRobotInformationReceived(agent_data.agent_id);
     }
     return;
@@ -159,10 +164,18 @@ void MainWindow::sendBaseStationUpdate()
     // Update Roles from robot widgets
     for(unsigned int rob=0;rob<NROBOTS;rob++) {
         mBsInfo.roles[rob] = robwidgets[rob]->getCurrentRole();
-        if(robotState[rob] && robwidgets[rob]) robwidgets[rob]->updateInformation(robots[rob].hardware_info,recvFreqs[rob]);
+        if(robotState[rob] && robwidgets[rob]) robwidgets[rob]->updateInformation(robots[rob].ai_info,robots[rob].hardware_info,recvFreqs[rob]);
     }
     // Send information to Robots
     sendInfoOverMulticast();
+    // Generate and send JSON world state
+    sendJSONWorldState();
+}
+
+void MainWindow::sendJSONWorldState()
+{
+    std::string data = "";
+    jsonLogger->getSerialized(data);
 }
 
 void MainWindow::sendInfoOverMulticast()
@@ -329,7 +342,7 @@ bool MainWindow::connectToRefBox()
 void MainWindow::detectRobotsState()
 {
     for(int i=0;i<NROBOTS;i++) {
-        if(robotReceivedPackets[i]>6) robotState[i] = true;
+        if(robotReceivedPackets[i]>4) robotState[i] = true;
         else robotState[i] = false;
         robotReceivedPackets[i] = 0;
     }
@@ -431,7 +444,15 @@ void MainWindow::onRefBoxData()
         if(isCyan && command[0].isUpper()) mBsInfo.gamestate = sPRE_OWN_FREEKICK;
         else if(!isCyan && command[0].isLower()) mBsInfo.gamestate = sPRE_OWN_FREEKICK;
         else mBsInfo.gamestate = sPRE_THEIR_FREEKICK;
-    } else mBsInfo.gamestate = sSTOPPED;
+    } else if(command == "G" || command == "g"){ // goalkick
+        if(isCyan && command[0].isUpper()) mBsInfo.gamestate = sPRE_OWN_GOALKICK;
+        else if(!isCyan && command[0].isLower()) mBsInfo.gamestate = sPRE_OWN_GOALKICK;
+        else mBsInfo.gamestate = sPRE_THEIR_GOALKICK;
+    }else if(command == "P" || command == "p"){ // penalty
+        if(isCyan && command[0].isUpper()) mBsInfo.gamestate = sPRE_OWN_PENALTY;
+        else if(!isCyan && command[0].isLower()) mBsInfo.gamestate = sPRE_OWN_PENALTY;
+        else mBsInfo.gamestate = sPRE_THEIR_PENALTY;
+    }else mBsInfo.gamestate = sSTOPPED;
 }
 
 void MainWindow::onRefBoxDisconnection()
