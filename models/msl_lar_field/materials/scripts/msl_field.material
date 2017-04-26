@@ -10,7 +10,7 @@ material RoboCupField/Field
 
       texture_unit
       {
-        scale 1.0 1.0
+        scale 0.2 0.2
         texture field.jpg
         filtering bilinear
       }
