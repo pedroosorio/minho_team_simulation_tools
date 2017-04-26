@@ -152,6 +152,10 @@ private:
     bool refboxConnected;
     /// \brief refbox worldstate logger object
     cPacketRefboxLogger *jsonLogger;
+    /// \brief pointer to base obstacle
+    VisualPtr obstacleVisual;
+    /// \brief vector of obstacles drawn on scene
+    std::vector<VisualPtr> sceneObstacles;
 };
 
 #endif // MAINWINDOW_H

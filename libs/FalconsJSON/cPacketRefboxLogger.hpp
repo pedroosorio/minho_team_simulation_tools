@@ -67,7 +67,7 @@ class cPacketRefboxLogger
 
         void cleanBallsAndObstacles();
         void updateRobotInformation(minho_team_ros::interAgentInfo info);
-
+        void removeRobot(int robotId);
     private:
         packetStructureDeserialized _mPacket;
         json_object *_jsonObject;

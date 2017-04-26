@@ -15,7 +15,7 @@ MainWindow::MainWindow(bool isOfficialField, Multicastpp *coms, QWidget *parent)
     ui->setupUi(this);
     robwidgetsReady = false;
     refboxConnected = false;
-    refboxSocket = NULL;
+    refboxSocket = loggerSocket =  NULL;
     ui->statusBar->showMessage("Loading resources ...");
     setupGraphicsUI();
     connectToRefBox();
@@ -156,6 +156,7 @@ bool MainWindow::isAgentInfoMessage(udp_packet *packet)
 
 void MainWindow::sendBaseStationUpdate()
 {
+    static int count = 0;
     // Compute stuff
 
     // Update Graphics
@@ -169,13 +170,15 @@ void MainWindow::sendBaseStationUpdate()
     // Send information to Robots
     sendInfoOverMulticast();
     // Generate and send JSON world state
-    sendJSONWorldState();
+    if(count<5) count++;
+    else { sendJSONWorldState(); count = 0; }
 }
 
 void MainWindow::sendJSONWorldState()
 {
     std::string data = "";
     jsonLogger->getSerialized(data);
+    if(refboxSocket) refboxSocket->write(QByteArray::fromStdString(data));
 }
 
 void MainWindow::sendInfoOverMulticast()
@@ -237,6 +240,12 @@ void MainWindow::setVisibilityBsBall(bool isVisible)
 
 void MainWindow::updateGraphics()
 {
+    for(int j=0;j<sceneObstacles.size();j++) {
+        scene->RemoveVisual(sceneObstacles[j]);
+        sceneObstacles[j].reset();
+    }
+
+    sceneObstacles.clear();
     int onRobots = 0;
     for(int i=0;i<NROBOTS;i++){
         robwidgets[i]->setWidgetState(robotState[i]);
@@ -258,11 +267,30 @@ void MainWindow::updateGraphics()
                 } else if(ballVisuals[i]) ballVisuals[i]->SetTransparency(1.0);
 
             onRobots++;
+
+            // Draw obstacles
+            for(int k=0;k<robots[i].agent_info.robot_info.obstacles.size();k++){
+                if(robots[i].agent_info.robot_info.obstacles[k].isenemy){
+                    VisualPtr newObs;
+                    std::string visualname = "obstacle"+std::to_string(sceneObstacles.size());
+                    newObs.reset(new Visual(visualname.c_str(), scene));
+                    newObs->Load();
+                    newObs->AttachMesh("unit_sphere");
+                    newObs->SetScale(math::Vector3(0.5, 0.5, 0.8));
+                    newObs->SetCastShadows(false);
+                    newObs->SetMaterial("Gazebo/Black");
+                    newObs->SetVisibilityFlags(GZ_VISIBILITY_GUI);
+                    newObs->SetWorldPosition(math::Vector3(robots[i].agent_info.robot_info.obstacles[k].x,
+                                                           -robots[i].agent_info.robot_info.obstacles[k].y,0.4));
+                    sceneObstacles.push_back(newObs);
+                }
+            }
         } else {
             // hide stuff from robot i
             setVisibilityRobotGraphics(i,false);
             mBsInfo.roles[i] = rSTOP;
             data_timers[i].restart();
+            //jsonLogger->removeRobot(robots[i].agent_id);
         }
     }
 
@@ -303,6 +331,7 @@ bool MainWindow::connectToRefBox()
     }
 
     refboxSocket = new QTcpSocket();
+
     QString refboxIP = "127.0.0.1";
     // red iptable.cfg from common
     std::string ipFilePath = getenv("HOME");

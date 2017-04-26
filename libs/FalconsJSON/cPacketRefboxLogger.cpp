@@ -76,7 +76,9 @@ void cPacketRefboxLogger::setRobotPose(const uint8_t robotId, const minho_team_r
 			isRobotPresent(robotId, isFound, index);
 		}
 
-		_mPacket.robots.at(index).pose = pose;
+        _mPacket.robots.at(index).pose.x = pose.y;
+        _mPacket.robots.at(index).pose.y = pose.x;
+        _mPacket.robots.at(index).pose.z = (3*M_PI/2)-pose.z*(M_PI/180.0);
 	}
 	catch (exception &e)
 	{
@@ -549,10 +551,23 @@ void cPacketRefboxLogger::cleanBallsAndObstacles()
 
 void cPacketRefboxLogger::updateRobotInformation(minho_team_ros::interAgentInfo info)
 {
+    std::string strActions[11] = {"aSTOP","aAPPROACHPOSITION","aFASTMOVE","aAPPROACHBALL","aENGAGEBALL",
+    "aSLOWENGAGEBALL","aRECEIVEBALL", "aPASSBALL", "aKICKBALL", "aDRIBBLEBALL", "aHOLDBALL"};
+
     setRobotPose(info.agent_id,info.agent_info.robot_info.robot_pose);
     setRobotBallPossession(info.agent_id,info.agent_info.robot_info.has_ball);
     setRobotBatteryLevel(info.agent_id,info.hardware_info.battery_main);
     setRobotVelocity(info.agent_id,info.agent_info.robot_info.robot_velocity);
     setRobotTargetPose(info.agent_id,info.ai_info.target_pose);
-    setRobotIntention(info.agent_id, "Stop");
+    setRobotIntention(info.agent_id, strActions[info.ai_info.action]);
+}
+
+void cPacketRefboxLogger::removeRobot(int robotId)
+{
+    bool isFound = false;
+    size_t index = 0;
+    isRobotPresent(robotId,isFound,index);
+    if(isFound){
+        _mPacket.robots.erase(_mPacket.robots.begin()+index);
+    }
 }
