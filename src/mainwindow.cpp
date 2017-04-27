@@ -154,6 +154,73 @@ bool MainWindow::isAgentInfoMessage(udp_packet *packet)
     else return false;
 }
 
+void MainWindow::merge_ball_pose()
+{
+      std::vector <float> bx,by,rx,ry;
+      float distancia[NROBOTS];
+      float xMain = 0.0,yMain = 0.0,distTotal = 0.0, mediaX = 0.0, mediaY = 0.0;
+      int numNow = 0;
+
+      for(unsigned int rob=0;rob<NROBOTS;rob++)
+      {
+        if(robotState[rob] && robots[rob].agent_info.robot_info.sees_ball)
+        {
+          rx.push_back(robots[rob].agent_info.robot_info.robot_pose.x);// Adiciona ao vector rx a posição x do robô
+          ry.push_back(robots[rob].agent_info.robot_info.robot_pose.y);// Adiciona ao vector ry a posição y do robô
+          bx.push_back(robots[rob].agent_info.robot_info.ball_position.x);// Adiciona ao vector bx a posição x da sua bola
+          by.push_back(robots[rob].agent_info.robot_info.ball_position.y);// Adiciona ao vector by a posição y da sua bola
+          numNow++;
+        }
+          //.robot_info.robot_pose.x)
+      }
+
+      for(unsigned int i=0;i<rx.size();i++)
+      {
+          float calcAux = (float)sqrt(((bx[i]-rx[i])*(bx[i]-rx[i])+(by[i]-ry[i])*(by[i]-ry[i]))); //Calcula a distância do robô à bola
+          distancia[i] = (calcAux);
+          mediaX += bx[i]; // Cria media de X
+          mediaY += by[i]; // Cria media de Y
+      }
+
+      mediaX = mediaX / rx.size();
+      mediaY = mediaY / rx.size();
+
+      float distanciasVirtuais[rx.size()], distVirtMedia = 0.0;
+
+      //Calcula a distância virtual em relação às médias
+      for(unsigned int i=0;i<rx.size();i++)
+      {
+          distanciasVirtuais[i] = sqrt(((bx[i]-mediaX)*(bx[i]-mediaX)+(by[i]-mediaY)*(by[i]-mediaY)));
+          distVirtMedia+= distanciasVirtuais[i];
+      }
+
+      distVirtMedia = distVirtMedia/rx.size();
+
+      int working = 0;
+
+      //Calcula a posição final da bola
+      for(unsigned int i=0;i<rx.size();i++)
+      {
+          if(distanciasVirtuais[i]<=distVirtMedia)
+          {
+              xMain += bx[i]*(1/distancia[i]);
+              yMain += by[i]*(1/distancia[i]);
+              distTotal+= (1/distancia[i]);
+              working++;
+          }
+      }
+
+      //Caso alguma das ditâncias tenham sido aceites relativamente à média é apresentada a posição final da bola
+      if(working>0)
+      {
+          xMain = xMain/distTotal;
+          yMain = yMain/distTotal;
+
+          mBsInfo.ball.x = xMain;
+          mBsInfo.ball.y = yMain;
+      }
+}
+
 void MainWindow::sendBaseStationUpdate()
 {
     static int count = 0;
@@ -167,11 +234,21 @@ void MainWindow::sendBaseStationUpdate()
         mBsInfo.roles[rob] = robwidgets[rob]->getCurrentRole();
         if(robotState[rob] && robwidgets[rob]) robwidgets[rob]->updateInformation(robots[rob].ai_info,robots[rob].hardware_info,recvFreqs[rob]);
     }
+
+    /////////////////////////////////////////////////////////////
+
+    merge_ball_pose();
+
+    /////////////////////////////////////////////////////////////
+
     // Send information to Robots
     sendInfoOverMulticast();
     // Generate and send JSON world state
     if(count<5) count++;
     else { sendJSONWorldState(); count = 0; }
+
+
+
 }
 
 void MainWindow::sendJSONWorldState()
@@ -296,6 +373,8 @@ void MainWindow::updateGraphics()
 
     if(onRobots>0){
         setVisibilityBsBall(true);
+        bsBallVisual->SetWorldPosition(math::Vector3(mBsInfo.ball.x,-mBsInfo.ball.y,0.11));
+
     } else setVisibilityBsBall(false);
 }
 

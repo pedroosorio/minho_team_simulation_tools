@@ -108,6 +108,8 @@ private slots:
     void onRelocRequest(int id);
     ///  \brief slot to set data for requesting a IMU reset
     void onResetIMURequest(int id);
+    ///  \function to merge ball pose
+    void merge_ball_pose();
 signals:
     void newRobotInformationReceived(int agent_id);
 private:
@@ -156,6 +158,8 @@ private:
     VisualPtr obstacleVisual;
     /// \brief vector of obstacles drawn on scene
     std::vector<VisualPtr> sceneObstacles;
+    //Old ball pose
+    float old_x_ball,old_y_ball;
 };
 
 #endif // MAINWINDOW_H
