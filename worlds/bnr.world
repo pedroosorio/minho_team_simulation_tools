@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+  
+   <gui>
+      <camera name="user_camera">
+        <pose>0.68 -1.08 1.018 0.00 0.5476 2.05</pose>
+      </camera>
+    </gui> 
+    
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- Game field, including ref box table
+    for reference, the two goalies, line markings
+    and stoppers. -->
+    
+
+  </world>
+</sdf>

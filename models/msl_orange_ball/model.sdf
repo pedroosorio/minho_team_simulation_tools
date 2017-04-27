@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="RoboCup MSL Ball">
+   <pose>0 0 0.115 0 3.14 0</pose>
+    <static>false</static>
+    <link name="ball">
+        <inertial>
+          <mass>0.41</mass>
+          <inertia>
+            <ixx>3.2e-03</ixx>
+            <iyy>3.2e-03</iyy>
+            <izz>3.2e-03</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+      <collision name="collision">
+        <geometry>
+          <sphere>
+            <radius>0.11</radius>
+          </sphere>
+        </geometry>
+        <surface>
+            <bounce>
+              <restitution_coefficient>0.6</restitution_coefficient>
+              <threshold>0.01</threshold>
+            </bounce>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <slip1>0.0</slip1>
+                <slip2>0.0</slip2>
+              </ode>
+            </friction>
+            <contact>
+              <ode>
+                <max_vel>10</max_vel>
+                <min_depth>0.001</min_depth>
+                <!--<kp>1e8</kp>-->
+              </ode>
+            </contact>
+          </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+            <sphere>
+            <radius>0.11</radius>
+          </sphere>      
+         </geometry>
+         <material>
+          <script>
+            <uri>model://msl_orange_ball/materials/scripts/</uri>
+            <uri>model://msl_orange_ball/materials/textures/</uri>
+            <name>RoboCupBall/Orange</name>
+          </script>
+        </material>
+      </visual>
+      
+      <velocity_decay>
+        <linear>0.001</linear>
+        <angular>0.05</angular>
+      </velocity_decay>
+      <self_collide>false</self_collide>
+      <gravity>true</gravity>
+    </link>
+  </model>
+</sdf>

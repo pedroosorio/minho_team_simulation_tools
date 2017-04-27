@@ -1,0 +1,277 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="RoboCup MSL Field - Official">
+   <pose>-10.2 -7.2 -0.1 0 0 0</pose>
+   <static>true</static>
+
+    <link name="field">
+      <collision name="field_collision">
+        <geometry>
+          <mesh>
+             <scale>1 1 1</scale>
+             <uri>model://msl_official_field/meshes/ocollision.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+            <bounce>
+              <restitution_coefficient>0.3</restitution_coefficient>
+              <threshold>0</threshold>
+            </bounce>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+      </collision>
+      <collision name="base_collision">
+      <pose>10.2 7.2 -0.25 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>20.4 14.4 0.5</size>
+          </box>
+        </geometry>
+        <surface>
+            <bounce>
+              <restitution_coefficient>0.6</restitution_coefficient>
+              <threshold>0</threshold>
+            </bounce>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+      </collision>
+      <visual name="field_visual">
+        <pose>10.2 7.2 0.05 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>20 14 0.1</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Field</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="lines_visual">
+        <geometry>
+          <mesh>
+             <scale>1 1 1</scale>
+             <uri>model://msl_official_field/meshes/olines.STL</uri>
+          </mesh>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Line</name>
+          </script>
+        </material>
+      </visual>
+      
+      <visual name="border_visual">
+        <geometry>
+          <mesh>
+             <scale>1 1 1</scale>
+             <uri>model://msl_official_field/meshes/oborder.STL</uri>
+          </mesh>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Border</name>
+          </script>
+        </material>
+      </visual>
+      
+      <visual name="refbox_visual">
+      <pose>10.2 -0.5 0.5 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>2 1 1</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Wood</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="banner_visual">
+      <pose>10.2 -0.5 1.005 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>2 1 0.01</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/OfficialRefBox</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="goals_visual">
+      <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+             <scale>1 1 1</scale>
+             <uri>model://msl_official_field/meshes/ogoals.STL</uri>
+          </mesh>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Goal</name>
+          </script>
+        </material>
+      </visual>
+
+      <!--- NETS LEFT --->
+      <visual name="netlu_visual">
+      <pose>0.81875 7.2 1.1625 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.53125 2.125 0.0025</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="netlb_visual">
+      <pose>0.55 7.2 0.83125 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0025 2.125 0.6656</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="netlr_visual">
+      <pose>0.81875 6.1375 0.83125 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.53125 0.0025 0.6656</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="netll_visual">
+      <pose>0.81875 8.2625 0.83125 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.53125 0.0025 0.6656</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+
+
+      <!--- NETS RIGHT --->
+      <visual name="netru_visual">
+      <pose>19.58125 7.2 1.1625 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.53125 2.125 0.0025</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+      <visual name="netrb_visual">
+      <pose>19.85 7.2 0.83125 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0025 2.125 0.6656</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+      
+      <visual name="netrr_visual">
+      <pose>19.58125 6.1375 0.83125 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.53125 0.0025 0.6656</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="netrl_visual">
+      <pose>19.58125 8.2625 0.83125 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.53125 0.0025 0.6656</size>
+          </box>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://msl_official_field/materials/scripts/</uri>
+            <uri>model://msl_official_field/materials/textures/</uri>
+            <name>RoboCupField/Net</name>
+          </script>
+        </material>
+      </visual>
+  </link>
+
+  </model>
+</sdf>

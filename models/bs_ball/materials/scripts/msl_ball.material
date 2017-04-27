@@ -1,0 +1,39 @@
+material RoboCupBall/Orange
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.0 1.0 1.0 1.0
+      diffuse 0.8 0.8 0.8 1.0
+      specular 0.2 0.2 0.2 1.0 12.5
+
+      texture_unit
+      {
+        scale 1.0 1.0
+        texture orange.png
+        filtering bilinear
+      }
+    }
+  }
+}
+
+material RoboCupBall/Yellow
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.0 1.0 1.0 1.0
+      diffuse 0.8 0.8 0.8 1.0
+      specular 0.2 0.2 0.2 1.0 12.5
+
+      texture_unit
+      {
+        scale 1.0 1.0
+        texture yellow.png
+        filtering bilinear
+      }
+    }
+  }
+}

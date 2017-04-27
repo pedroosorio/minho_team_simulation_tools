@@ -1,0 +1,188 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="bs_robot">
+    <static>false</static>
+    <link name="base">
+       <pose>0 0 0.01 0 0 1.57</pose>
+        <inertial>
+        <mass>31</mass>
+            <inertia>
+               <ixx>100</ixx>
+               <ixy>0</ixy>
+               <ixz>0</ixz>
+               <iyy>100</iyy>
+               <iyz>0</iyz>
+               <izz>2.86</izz>
+           </inertia>
+        </inertial>
+      <collision name="collision_base">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://bs_robot/meshes/base.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+          <friction>
+              <ode>
+                <mu>0.1</mu>
+                <mu2>0.1</mu2>
+              </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual_base">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://bs_robot/meshes/base.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <self_collide>true</self_collide>
+      <gravity>true</gravity>
+    </link>
+    
+    <link name="mid">
+       <pose>0 0 0.008 0 0 1.57</pose>
+      <collision name="collision_middle">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://bs_robot/meshes/mid.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_middle">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://bs_robot/meshes/mid.stl</uri>
+          </mesh>
+        </geometry>
+            <material>
+                <!-- CYAN -->
+                <ambient>0.0 0.1 0.6 1.0</ambient>
+                <diffuse>0.0 0.8 0.8 1.0</diffuse>
+                <specular>0.5 0.5 0.5 1.0</specular>
+            </material>
+      </visual>
+    <self_collide>true</self_collide>
+    <gravity>true</gravity>
+    </link>
+    
+    <link name="head">
+      <collision name="collision_head">
+      <pose>0 0 0.73 0 0 1.57</pose>
+        <geometry>
+          <box>
+            <size>0.15 0.15 0.15</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual_head">
+      <pose>0 0 0.01 0 0 1.57</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://bs_robot/meshes/head.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.0 0.0 0.0 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+    <self_collide>true</self_collide>
+      <gravity>true</gravity>
+    </link>
+    
+    <link name="numberings">
+    <pose>0 0 0.008 0 0 1.57</pose>
+     <visual name="numbering_back">
+      <pose>-0.172 0 0.4 1.21 0 -1.57</pose>
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <scale>0.3 0.3 0.3</scale>
+            <uri>model://bs_robot/meshes/nr_1.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <visual name="numbering_right">
+      <pose>0 -0.172 0.4 1.21 0 0</pose>
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <scale>0.3 0.3 0.3</scale>
+            <uri>model://bs_robot/meshes/nr_1.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <visual name="numbering_left">
+      <pose>0 0.172 0.4 1.21 0 3.14</pose>
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <scale>0.3 0.3 0.3</scale>
+            <uri>model://bs_robot/meshes/nr_1.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+    </link>
+    
+    <joint type="fixed" name="base_mid">
+        <pose>0 0 0.2 0 0 0</pose>
+        <child>mid</child>
+        <parent>base</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    
+    <joint type="fixed" name="mid_head">
+        <pose>0 0 0.5 0 0 0</pose>
+        <child>head</child>
+        <parent>mid</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    
+    <joint type="fixed" name="numbers">
+        <pose>0 0 0.2 0 0 0</pose>
+        <child>mid</child>
+        <parent>numberings</parent>
+        <axis>
+          <xyz>1 1 1</xyz>
+        </axis>
+    </joint>      
+        
+        <plugin filename="libbs_rplugin.so" name="bs_rplugin"> </plugin>
+    
+  </model>
+</sdf>

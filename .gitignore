@@ -1,2 +1,7 @@
 build/*
 CMakeLists.txt.user
+*~
+tools/mtSim/*.pro.user
+tools/build*/*
+CMakeLists.txt.user
+plugins/*.so

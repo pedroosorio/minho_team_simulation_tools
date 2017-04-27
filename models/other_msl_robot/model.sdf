@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="other_robot">
+    <static>false</static>
+    <link name="base">
+       <pose>0 0 0.01 0 0 1.57</pose>
+        <inertial>
+            <mass>31</mass>
+            <pose>0 0 0 0 0 0</pose>
+            <inertia>
+                <ixx>0</ixx>
+                <ixy>0</ixy>
+                <ixz>0</ixz>
+                <iyy>0</iyy>
+                <iyz>0</iyz>
+                <izz>2.86</izz>
+            </inertia>
+        </inertial>
+      <collision name="collision_base">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://minhoteam_msl_robot/meshes/base.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+          <friction>
+              <ode>
+                <mu>0.1</mu>
+                <mu2>0.1</mu2>
+              </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual_base">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://minhoteam_msl_robot/meshes/base.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.02 0.02 0.02 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+      <velocity_decay>
+        <linear>0.003</linear>
+        <angular>0.005</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    
+    <link name="mid">
+       <pose>0 0 0.008 0 0 1.57</pose>
+      <collision name="collision_middle">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://minhoteam_msl_robot/meshes/mid.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_middle">
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://minhoteam_msl_robot/meshes/mid.stl</uri>
+          </mesh>
+        </geometry>
+            <material>
+                <!-- CYAN -->
+                <ambient>0.6 0.0 0.3 1.0</ambient>
+                <diffuse>0.6 0.0 0.5 1.0</diffuse>
+                <specular>0.5 0.5 0.5 1.0</specular>
+            </material>
+      </visual>
+    </link>
+    
+    <link name="head">
+      <collision name="collision_head">
+      <pose>0 0 0.73 0 0 1.57</pose>
+        <geometry>
+          <box>
+            <size>0.15 0.15 0.15</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual_head">
+      <pose>0 0 0.01 0 0 1.57</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://minhoteam_msl_robot/meshes/head.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>0.0 0.0 0.0 1.0</ambient>
+            <diffuse>0.01 0.01 0.01 1.0</diffuse>
+            <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
+      </visual>
+    </link>
+    
+    <joint type="fixed" name="base_mid">
+        <pose>0 0 0.2 0 0 0</pose>
+        <child>mid</child>
+        <parent>base</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    
+    <joint type="fixed" name="mid_head">
+        <pose>0 0 0.5 0 0 0</pose>
+        <child>head</child>
+        <parent>mid</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+    </joint>
+    
+    <plugin filename="libother_robot.so" name="other_robot">
+ 
+    </plugin>
+    
+  </model>
+</sdf>
