@@ -495,10 +495,10 @@ void Minho_Robot::publishRobotInfo()
         // Add noise
         double min = 0.0, max = 0.5;
         double ratio = distance_to_ball_/VISION_RANGE_RADIUS;
-        if(ratio <= 0.3) {min = 0.0; max = 0.03;}
-        else if(ratio <= 0.6) {min = 0.0; max = 0.05;}
-        else if(ratio <= 0.8) {min = 0.05; max = 0.2;}
-        else if(ratio <= 1.0) {min = 0.2; max = 0.35;}
+        if(ratio <= 0.3) {min = 0.0; max = 0.4;}
+        else if(ratio <= 0.6) {min = 0.0; max = 0.5;}
+        else if(ratio <= 0.8) {min = 0.05; max = 0.6;}
+        else if(ratio <= 1.0) {min = 0.2; max = 0.8;}
        
         double error = generateNoise(0.0,0.25,min,max);
         double direction = std::atan2(ball_pose_.pos.y-model_pose_.pos.y
