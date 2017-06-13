@@ -1,3 +1,5 @@
+build/*
+CMakeLists.txt.user
 *~
 tools/mtSim/*.pro.user
 tools/build*/*
