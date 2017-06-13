@@ -177,6 +177,8 @@ namespace gazebo
     /// \brief setus up model sensors, performing detection and type identification
     void setupSensors();
     
+    math::Vector3 getAccelDeccelVelocity();
+    
     // VARIABLES
         
     /// \brief Pointer to the model that defines this plugin
@@ -301,6 +303,11 @@ namespace gazebo
     
     /// \brief flag to control timer between kicks
     unsigned int kick_stab_counter;
+    
+    /// \brief acceleration and decceleration constants
+    float constAccel, constDeccel;
+    
+    math::Vector3 targetCommand, lastCommand, currentCommand;
    
   };
 }

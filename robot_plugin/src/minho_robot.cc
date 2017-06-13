@@ -50,6 +50,8 @@ Minho_Robot::Minho_Robot()
     MAX_ANG_VEL = 15.0;
     MAX_BALL_VEL = 8.0;
     SHOOT_ANGLE = 0.0;
+    targetCommand = math::Vector3(0,0,0);
+    currentCommand = lastCommand = targetCommand;
     BALL_MODEL_NAME = "RoboCup MSL Ball";
     controlCommandsReceived = false;
     VISION_RANGE_RADIUS = 5.0;
@@ -322,8 +324,9 @@ void Minho_Robot::onUpdate()
     
     if(timeout_counter<5){
        // Apply defined velocities to the robot
-       _model_->SetLinearVel(linear_velocity_);
-       _model_->SetAngularVel(angular_velocity_);
+       //_model_->SetLinearVel(linear_velocity_);
+       //_model_->SetAngularVel(angular_velocity_);
+       applyVelocities(getAccelDeccelVelocity());
        
        // Activate dribbling algorithm, if the ball is in possession and
        // dribling is activated
@@ -336,6 +339,8 @@ void Minho_Robot::onUpdate()
        }
     }else {
        linear_velocity_.x = linear_velocity_.y = angular_velocity_.x = angular_velocity_.y = 0;
+       targetCommand = math::Vector3(0,0,0);
+       currentCommand = lastCommand = targetCommand;
        _model_->SetLinearVel(linear_velocity_);
        _model_->SetAngularVel(angular_velocity_);
     }
@@ -348,6 +353,7 @@ void Minho_Robot::onUpdate()
     control_info_mutex_.unlock();
 }
 
+    
 /// \brief called by event signal when a model or server reset happens
 void Minho_Robot::onReset()
 {
@@ -367,7 +373,9 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
          linear_vel_ = msg->linear_velocity;
          mov_direction_ = 360-msg->movement_direction;
          angular_vel_ = msg->angular_velocity;
-         applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
+         //applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
+         targetCommand = math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity);
+         lastCommand = currentCommand;
          //Apply dribbling
          dribblers_on_ = msg->dribbler_on;
          controlCommandsReceived = true;
@@ -378,15 +386,49 @@ void Minho_Robot::controlInfoCallback(const controlInfo::ConstPtr& msg)
             linear_vel_ = msg->linear_velocity;
             mov_direction_ = 360-msg->movement_direction;
             angular_vel_ = msg->angular_velocity;
-            applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
+            //applyVelocities(math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity));
+            targetCommand = math::Vector3(msg->linear_velocity, 360-msg->movement_direction, msg->angular_velocity);
+            lastCommand = currentCommand;
             //Apply dribbling
             dribblers_on_ = msg->dribbler_on;
             controlCommandsReceived = true;
         }
     }
-    
     // unlock resources
     control_info_mutex_.unlock();
+}
+
+math::Vector3 Minho_Robot::getAccelDeccelVelocity()
+{
+    float deltavx = -constDeccel, deltavr = -constDeccel;
+
+    float difx = targetCommand.x-lastCommand.x,
+          dify = targetCommand.y-lastCommand.y,
+          difz = targetCommand.z-lastCommand.z;
+    
+    /*if(targetCommand.y!=lastCommand.y) currentCommand.x = 0;
+    if(difx!=0){
+        if(difx>0) deltavx = constAccel;
+        currentCommand.x += deltavx;
+        if(deltavx>0 && currentCommand.x>targetCommand.x)
+            currentCommand.x = targetCommand.x;
+        if(targetCommand.x!=0) { 
+            currentCommand.y = targetCommand.y;
+            ROS_INFO("Here");
+        }
+    } else currentCommand.x = targetCommand.x;*/
+    
+    currentCommand.x = targetCommand.x;
+    currentCommand.y = targetCommand.y;
+    
+    if(difz!=0){
+        if(difz>0) deltavr = constAccel; 
+        currentCommand.z += deltavr;
+        if(deltavr>0 && currentCommand.z>targetCommand.z)
+            currentCommand.z = targetCommand.z;
+    } else currentCommand.z = targetCommand.z;
+    
+    return currentCommand;
 }
 
 /// \brief function to actuate kicker, in order to kick the ball. Only kicks if
@@ -639,7 +681,15 @@ void Minho_Robot::initializePluginParameters(sdf::ElementPtr _sdf)
     
     if(_sdf->HasElement("grip_decay")){
         _sdf->GetElement("grip_decay")->GetValue()->Get(GRIP_DECAY);
-    } else ROS_WARN("No vision range radius parameter defined in plugin's SDF");
+    } else ROS_WARN("No grip decay parameter defined in plugin's SDF");
+    
+    if(_sdf->HasElement("accel")){
+        _sdf->GetElement("accel")->GetValue()->Get(constAccel);
+    } else ROS_WARN("No acceleration parameter defined in plugin's SDF");
+    
+    if(_sdf->HasElement("deccel")){
+        _sdf->GetElement("deccel")->GetValue()->Get(constDeccel);
+    } else ROS_WARN("No decceleration parameter defined in plugin's SDF");
 }
 
 /// \brief generates random noise to add gaussian noise to a variable read from the 
